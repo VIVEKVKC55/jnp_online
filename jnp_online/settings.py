@@ -80,12 +80,8 @@ WSGI_APPLICATION = "jnp_online.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Backend for MySQL
-        'NAME': 'jnp',          # Replace with your database name
-        'USER': 'root',               # Replace with your MySQL username
-        'PASSWORD': '',           # Replace with your MySQL password
-        'HOST': 'localhost',                   # Use '127.0.0.1' if localhost doesn't work
-        'PORT': '3306',                        # Default MySQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',  # This will create the database file in your project's root directory
     }
 }
 
