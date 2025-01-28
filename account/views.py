@@ -47,7 +47,7 @@ def customer_login(request):
             messages.success(request, "Login successful!")
             
             # Check if there is a 'next' parameter, otherwise default to home
-            next_url = request.GET.get('next', reverse_lazy('home'))
+            next_url = request.GET.get('next', reverse_lazy('home:home'))
             return redirect(next_url)  # Redirect to the original page or home
         else:
             messages.error(request, "Invalid username or password.")
