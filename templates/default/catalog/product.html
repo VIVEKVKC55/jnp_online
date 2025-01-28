@@ -43,7 +43,7 @@
 						<div id="product-main-img">
 							{% for image in images %}
                             <div class="product-preview">
-                                <img src="{% static image.full_url %}" alt="{{ image.title }}">
+                                <img src="/media/{{image.full_url}}" alt="{{ image.title }}">
                             </div>
                             {% endfor %}
 						</div>
@@ -55,7 +55,7 @@
 						<div id="product-imgs">
                             {% for image in images %}
                             <div class="product-preview">
-                                <img src="{% static image.full_url %}" alt="{{ image.title }}">
+                                <img src="/media/{{image.full_url}}" alt="{{ image.title }}">
                             </div>
                             {% endfor %}
 						</div>
@@ -160,6 +160,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div>
+												{% if user.is_authenticated %}
 												<h3>Product Attributes</h3>
 												<ul>
 													{% for attribute in attributes %}
@@ -169,6 +170,9 @@
 														</li>
 													{% endfor %}
 												</ul>
+												{% else %}
+												<a href="{% url 'account:login' %}">Plese Login for details</a>
+												{% endif %}
 											</div>
 										</div>
 									</div>
