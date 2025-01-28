@@ -1,15 +1,6 @@
 from django import forms
 from catalog.models import Product, ProductAttributes, ProductAttributeValue
-from django.forms import ClearableFileInput
 
-
-class MultiFileInput(ClearableFileInput):
-    template_name = 'django/forms/widgets/clearable_file_input.html'
-
-    def __init__(self, *args, **kwargs):
-        kwargs['attrs'] = kwargs.get('attrs', {})
-        kwargs['attrs']['multiple'] = 'multiple'
-        super().__init__(*args, **kwargs)
 
 class ProductForm(forms.ModelForm):
     """
@@ -17,18 +8,28 @@ class ProductForm(forms.ModelForm):
     """
     attributes_with_values = forms.ModelMultipleChoiceField(
         queryset=ProductAttributes.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'form-check-input'
+        }),
         required=False,
         label="Select Attributes"
     )
     
     attribute_values = forms.CharField(
-        widget=forms.Textarea(attrs={'placeholder': 'Enter corresponding attribute values'}),
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Enter corresponding attribute values',
+            'class': 'form-control',
+            'rows': 3
+        }),
         required=False,
         label="Enter Attribute Values"
     )
+    
     images = forms.ImageField(
-        widget=forms.ClearableFileInput(attrs={'multiple': False}),
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'form-control',
+            'multiple': False
+        }),
         required=False,  # Optional; you can make it required if needed
         label="Upload Images"
     )
@@ -36,10 +37,24 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = [
             'name', 'brand', 'category', 'short_description',
-            'description', 'canonical_url', 'is_best_seller',
-            'is_home_featured', 'is_featured', 'is_enabled',
-            'images',
+            'description', 'is_enabled',
         ]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand': forms.Select(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'short_description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 2,
+                'placeholder': 'Enter a brief description'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Enter a detailed description'
+            }),
+            'is_enabled': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
     def clean(self):
         cleaned_data = super().clean()
