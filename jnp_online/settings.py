@@ -87,9 +87,6 @@ DATABASES = {
         'PASSWORD': 't9TBUEGnonD1OXM4aQ81',
         'HOST': 'bjvhtaac6gj05avdxyvi-mysql.services.clever-cloud.com',
         'PORT': '3306',
-         'OPTIONS': {
-            'driver': 'mysql-connector-python',
-        },
     }
 }
 
