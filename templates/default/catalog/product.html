@@ -147,7 +147,7 @@
 									{% endfor %}
 								</ul>
 								{% else %}
-								<a href="{% url 'account:login' %}">Please Login for More details</a>
+								<a href="{% url 'account:login' %}?next={{ request.path }}">Please Login for More details</a>
 								{% endif %}
 							</div>
 						</div>
