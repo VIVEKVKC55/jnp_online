@@ -15,9 +15,8 @@
             "dest": "jnp_online/wsgi.py"
         }
     ],
-    "buildCommand": "apt-get update && apt-get install -y default-libmysqlclient-dev && vercel build",
     "env": {
-        "MYSQLCLIENT_CFLAGS": "-I/usr/include/mysql",
-        "MYSQLCLIENT_LDFLAGS": "-L/usr/lib/mysql -lmysqlclient"
-    }
+        "PIP_EXTRA_INDEX_URL": "https://pypi.org/simple"
+    },
+    "installCommand": "pip install mysql-connector-python"
 }
