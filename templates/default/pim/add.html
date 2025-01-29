@@ -41,7 +41,7 @@
 						{% csrf_token %}
 						{{ form.as_p }}
 					
-						<h3>Product Images</h3>
+						{% comment %} <h3>Product Images</h3>
 						{{ images_formset.management_form }}
 						{% for form in images_formset %}
 							<div class="form-group">
@@ -55,7 +55,7 @@
 							<div class="form-group">
 								{{ form.as_p }}
 							</div>
-						{% endfor %}
+						{% endfor %} {% endcomment %}
 					
 						<button type="submit" class="btn btn-primary">Create Product</button>
 					</form>

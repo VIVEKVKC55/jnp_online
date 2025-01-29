@@ -7,9 +7,9 @@ from catalog.models import Product, ProductImages, ProductAttributeValue, Produc
 from .forms import ProductForm
 
 
-class ProductListView(LoginRequiredMixin,ListView):
+class ProductListView(LoginRequiredMixin, ListView):
     """
-    View to list all products.
+    View to list all products for the logged-in user.
     """
     model = Product
     template_name = 'default/pim/product_list.html'  # Update this to match your template
@@ -18,10 +18,10 @@ class ProductListView(LoginRequiredMixin,ListView):
 
     def get_queryset(self):
         """
-        Customize the queryset if needed (e.g., filter by category, search, etc.).
+        Customize the queryset to return only products created by the current user.
         """
-        return Product.objects.select_related('category').order_by('name')
-    
+        return Product.objects.filter(created_by=self.request.user).select_related('category').order_by('name')
+
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
     """
@@ -37,7 +37,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         Restrict access to business users only.
         """
         # Check if the user is a business user by verifying if they have a BusinessRegistration
-        if not hasattr(request.user, 'business_details'):
+        if not hasattr(request.user, 'businessdetails'):
             # Redirect to a page or show an error if not a business user
             return redirect('home:home')  # Replace with actual page, e.g., login, or an error page
         
