@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -30,6 +31,17 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     form_class = ProductForm
     template_name = 'default/pim/add.html'
     success_url = reverse_lazy('pim:product_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Restrict access to business users only.
+        """
+        # Check if the user is a business user by verifying if they have a BusinessRegistration
+        if not hasattr(request.user, 'businessregistration'):
+            # Redirect to a page or show an error if not a business user
+            return redirect('home:home')  # Replace with actual page, e.g., login, or an error page
+        
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         """

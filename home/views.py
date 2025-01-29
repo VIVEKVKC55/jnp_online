@@ -14,7 +14,6 @@ def home(request):
             'product': product,
             'image': image,
         })
-        print(products_with_details)
     context = {
         'products': products_with_details,
     }
