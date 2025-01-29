@@ -18,5 +18,5 @@
     "env": {
         "PIP_EXTRA_INDEX_URL": "https://pypi.org/simple"
     },
-    "installCommand": "pip install mysqlclient"
+    "installCommand": "pip install mysql-connector-python"
 }
