@@ -15,9 +15,5 @@
             "dest": "jnp_online/wsgi.py"
         }
     ],
-    "buildCommand": "apt-get update && apt-get install -y default-libmysqlclient-dev && vercel build",
-    "env": {
-        "MYSQLCLIENT_CFLAGS": "-I/usr/include/mysql",
-        "MYSQLCLIENT_LDFLAGS": "-L/usr/lib/mysql -lmysqlclient"
-    }
+    "buildCommand": "apt-get update && apt-get install -y default-libmysqlclient-dev && vercel build"
 }
