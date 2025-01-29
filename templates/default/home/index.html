@@ -80,11 +80,12 @@
 									{% for item in products %}
 										<!-- product -->
 										<div class="product">
+											<a href="{% url 'catalog:product_detail' pk=item.product.id %}" class="product-link">
 											<div class="product-img">
 												{% if item.image %}
 													<img src="{{item.image.full_url.url}}" alt="{{ item.product.name }}">
 												{% else %}
-													<img src="/media/default-image.png" alt="Default Image">
+													<img src="{% static '/img/no-image.jpg' %}" alt="Default Image">
 												{% endif %}
 												{% comment %} <img src="{% static '/img/product01.png' %}" alt=""> {% endcomment %}
 												<div class="product-label">
@@ -120,6 +121,7 @@
 													</button>
 												</a>
 											</div>
+										</a>
 										</div>
 										<!-- /product -->
 									{% endfor %}
