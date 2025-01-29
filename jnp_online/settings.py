@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from pathlib import Path
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -45,6 +48,8 @@ INSTALLED_APPS = [
     'home',
     'pim',
     'business',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -143,4 +148,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': 'dftm375br',
+#     'API_KEY': '659457749696817',
+#     'API_SECRET': 'p58E9Q9kgJqUl0YOTP_iIP7aOIQ',
+# }
+cloudinary.config(
+    cloud_name="dftm375br",
+    api_key="659457749696817",
+    api_secret="p58E9Q9kgJqUl0YOTP_iIP7aOIQ"
+)
+# Set Cloudinary as the default file storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

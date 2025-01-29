@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 
 def rename_image(instance, filename):
     """It is used to rename a uploaded image."""
@@ -9,9 +10,9 @@ def rename_image(instance, filename):
     image_name = image_name.replace('.', '')
     ext = filename.split('.')[-1]
     if instance.pk:
-        return f'category/{image_name}_{instance.pk}.{ext}'
+        return f'product/{image_name}_{instance.pk}.{ext}'
     else:
-        return f'category/{image_name}.{ext}'
+        return f'product/{image_name}.{ext}'
 
 
 
@@ -32,7 +33,7 @@ class Category(models.Model):
     # is_active = models.BooleanField(default=False)
     # is_deleted = models.BooleanField(default=False)
     # is_featured = models.BooleanField(default=False)
-    image_url = models.ImageField(upload_to=rename_image, null=True, blank=True)
+    image_url = CloudinaryField('category', null=True, blank=True)
     image_alt_tag = models.CharField(max_length=160, null=True, blank=True)
     image_title = models.CharField(max_length=160, null=True, blank=True)
     canonical_url = models.CharField(max_length=500, null=True, blank=True)
@@ -66,7 +67,7 @@ class ProductBrand(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250)
-    image_url = models.ImageField(upload_to=rename_image, null=True, blank=True)
+    image_url = CloudinaryField('brand', null=True, blank=True)
     image_alt_tag = models.CharField(max_length=160, null=True, blank=True)
     image_title = models.CharField(max_length=160, null=True, blank=True)
     # canonical_url = models.CharField(max_length=500, null=True, blank=True)
@@ -190,10 +191,10 @@ class ProductImages(models.Model):
     #                                  db_column='product_part_id',
     #                                  null=True,
     #                                  blank=True)
-    full_url = models.ImageField(upload_to=rename_image, null=True, blank=True)
+    full_url = CloudinaryField('product_photos', null=True, blank=True)
     title = models.CharField(max_length=250, null=True, blank=True)
     caption = models.CharField(max_length=250, null=True, blank=True)
-    order_by = models.IntegerField(default=0, null=True, blank=True)
+    order_by = models.IntegerField(default=0, null=True, blank=True) 
     is_enabled = models.BooleanField(default=True)
     is_default = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)

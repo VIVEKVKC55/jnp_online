@@ -44,7 +44,7 @@
 							{% if images %}
 								{% for image in images %}
 								<div class="product-preview">
-									<img src="/media/{{image.full_url}}" alt="{{ image.title }}">
+									<img src="{{image.full_url.url}}" alt="{{ image.title }}">
 								</div>
 								{% endfor %}
 							{% else %}
@@ -60,7 +60,7 @@
 							{% if images %}
 								{% for image in images %}
 								<div class="product-preview">
-									<img src="/media/{{image.full_url}}" alt="{{ image.title }}">
+									<img src="{{image.full_url.url}}" alt="{{ image.title }}">
 								</div>
 								{% endfor %}
 							{% else %}
