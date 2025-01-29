@@ -37,7 +37,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         Restrict access to business users only.
         """
         # Check if the user is a business user by verifying if they have a BusinessRegistration
-        if not hasattr(request.user, 'businessregistration'):
+        if not hasattr(request.user, 'business_details'):
             # Redirect to a page or show an error if not a business user
             return redirect('home:home')  # Replace with actual page, e.g., login, or an error page
         

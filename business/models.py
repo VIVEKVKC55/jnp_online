@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from cloudinary.models import CloudinaryField
 
-class BusinessRegistration(models.Model):
+class BusinessDetails(models.Model):
     TYPE_OF_BUSINESS_CHOICES = [
         ('Importer', 'Importer'),
         ('Trader', 'Trader'),
@@ -30,3 +30,7 @@ class BusinessRegistration(models.Model):
 
     def __str__(self):
         return self.business_name
+    class Meta:
+        """Provide database table name explicitly."""
+
+        db_table = 'businuss_details'

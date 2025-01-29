@@ -46,7 +46,9 @@
 								</div>
 								{% endfor %}
 							{% else %}
-								<img src="/media/default-image.png" alt="Default Image">
+							<div class="product-preview">
+								<img src="{% static '/img/no-image.jpg' %}" alt="Default Image">
+							</div>
 							{% endif %}
 						</div>
 					</div>
@@ -62,7 +64,9 @@
 								</div>
 								{% endfor %}
 							{% else %}
-								<img src="/media/default-image.png" alt="Default Image">
+							<div class="product-preview">
+								<img src="{% static '/img/no-image.jpg' %}" alt="Default Image">
+							</div>
 							{% endif %}
 						</div>
 					</div>

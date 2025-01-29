@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import BusinessRegistration
+from .models import BusinessDetails
 from .forms import RegistrationForm
 
-@admin.register(BusinessRegistration)
+@admin.register(BusinessDetails)
 class BusinessRegistrationAdmin(admin.ModelAdmin):
     form = RegistrationForm  # Use the custom form
     
