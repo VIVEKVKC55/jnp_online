@@ -135,7 +135,21 @@
 								<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
 								<li><a href="#"><i class="fa fa-envelope"></i></a></li>
 							</ul> {% endcomment %}
-
+							<div>
+								{% if user.is_authenticated %}
+								<h3>Product Attributes</h3>
+								<ul>
+									{% for attribute in attributes %}
+										<li>
+											<strong>{{ attribute.attribute.attribute_name }}:</strong> 
+											{{ attribute.attribute_value }}
+										</li>
+									{% endfor %}
+								</ul>
+								{% else %}
+								<a href="{% url 'account:login' %}">Please Login for More details</a>
+								{% endif %}
+							</div>
 						</div>
 					</div>
 					<!-- /Product details -->
