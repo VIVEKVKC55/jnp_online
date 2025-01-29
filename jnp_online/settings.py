@@ -80,12 +80,19 @@ WSGI_APPLICATION = "jnp_online.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # This will create the database file in your project's root directory
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bjvhtaac6gj05avdxyvi',
+        'USER': 'utsaon9hsodbfo68',
+        'PASSWORD': 't9TBUEGnonD1OXM4aQ81',
+        'HOST': 'bjvhtaac6gj05avdxyvi-mysql.services.clever-cloud.com',
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
