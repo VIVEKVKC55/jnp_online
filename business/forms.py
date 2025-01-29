@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 from .models import BusinessRegistration
 
 class RegistrationForm(forms.ModelForm):
@@ -27,3 +28,26 @@ class RegistrationForm(forms.ModelForm):
             raise forms.ValidationError("Passwords do not match!")
 
         return cleaned_data
+
+    def save(self, commit=True):
+        # Get the cleaned data from the form
+        cleaned_data = self.cleaned_data
+        password = cleaned_data.get("password")
+        email = cleaned_data.get("email_id")
+
+        # Create a new User instance or update if needed
+        user = User.objects.create_user(
+            username=email,  # Use email as the username for the user
+            email=email,
+            password=password
+        )
+
+        # Now create or update the BusinessRegistration instance
+        business_registration = super().save(commit=False)
+        business_registration.user = user  # Associate the user with the business registration
+
+        if commit:
+            business_registration.save()
+
+        return business_registration
+
