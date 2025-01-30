@@ -1,10 +1,9 @@
 from django.shortcuts import redirect
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.models import Product, ProductImages, ProductAttributeValue, ProductAttributes
-from .forms import ProductForm, ProductImageFormSet
+from .forms import ProductForm, ProductImageFormSet, ProductAttributeValueFormSet
 
 class ProductListView(LoginRequiredMixin, ListView):
     """
@@ -30,20 +29,31 @@ class ProductCreateView(CreateView):
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
-        product_image_formset = ProductImageFormSet(queryset=ProductImages.objects.none())  
+        product_image_formset = ProductImageFormSet(queryset=ProductImages.objects.none())
+        product_attribute_value_formset = ProductAttributeValueFormSet(queryset=ProductAttributeValue.objects.none())
         return self.render_to_response({
             'form': form, 
-            'product_image_formset': product_image_formset
+            'product_image_formset': product_image_formset,
+            'product_attribute_value_formset': product_attribute_value_formset
         })
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
+        product_attribute_value_formset = ProductAttributeValueFormSet(request.POST, request.FILES)
         product_image_formset = ProductImageFormSet(request.POST, request.FILES)
 
+        # if form.is_valid() and product_attribute_value_formset.is_valid() and product_image_formset.is_valid():
         if form.is_valid() and product_image_formset.is_valid():
+
             product = form.save(commit=False)
             product.created_by = self.request.user
             product.save()
+
+            # for attribute_form in product_attribute_value_formset:
+            #     if attribute_form.cleaned_data.get('attribute_value'):
+            #         attribute_value = attribute_form.save(commit=False)
+            #         attribute_value.product = product
+            #         attribute_value.save()
 
             for image_form in product_image_formset:
                 if image_form.cleaned_data.get('full_url'):
@@ -55,5 +65,6 @@ class ProductCreateView(CreateView):
 
         return self.render_to_response({
             'form': form, 
-            'product_image_formset': product_image_formset
+            'product_image_formset': product_image_formset,
+            'product_attribute_value_formset': product_attribute_value_formset,
         })

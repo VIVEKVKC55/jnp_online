@@ -1,14 +1,13 @@
 from django import forms
-from catalog.models import Product, ProductAttributes, ProductImages
+from catalog.models import Product, ProductAttributes, ProductImages, ProductAttributeValue
 
 class ProductImageForm(forms.ModelForm):
     class Meta:
         model = ProductImages
-        fields = ['full_url', 'title', 'order_by', 'is_default']
+        fields = ['full_url', 'title', 'is_default']
         widgets = {
             'full_url': forms.FileInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'order_by': forms.NumberInput(attrs={'class': 'form-control'}),
             'is_default': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
@@ -19,28 +18,27 @@ ProductImageFormSet = forms.modelformset_factory(
     # can_delete=True  # Allow removing images dynamically
 )
 
+class ProductAttributeValueForm(forms.ModelForm):
+    class Meta:
+        model = ProductAttributeValue
+        fields = ['attribute', 'attribute_value', 'order_no']
+        widgets = {
+            'attribute': forms.Select(attrs={'class': 'form-control'}),
+            'attribute_value': forms.TextInput(attrs={'class': 'form-control'}),
+            'order_no': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+ProductAttributeValueFormSet = forms.modelformset_factory(
+    ProductAttributeValue,
+    form=ProductAttributeValueForm,
+    extra=1,  # Start with one empty form
+    # can_delete=True  # Allow removal of extra forms
+)
+
 class ProductForm(forms.ModelForm):
     """
     Form for creating and updating a Product with attributes and attribute values.
     """
-    attributes_with_values = forms.ModelMultipleChoiceField(
-        queryset=ProductAttributes.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={
-            'class': 'form-check-input'
-        }),
-        required=False,
-        label="Select Attributes"
-    )
-    
-    attribute_values = forms.CharField(
-        widget=forms.Textarea(attrs={
-            'placeholder': 'Enter corresponding attribute values (Separate by commas)',
-            'class': 'form-control',
-            'rows': 3
-        }),
-        required=False,
-        label="Enter Attribute Values"
-    )
     
     other_brand = forms.CharField(
         max_length=255,
@@ -73,8 +71,6 @@ class ProductForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        attribute_values = cleaned_data.get("attribute_values")
-        attributes = cleaned_data.get("attributes_with_values")
         brand = cleaned_data.get('brand')
         other_brand = cleaned_data.get('other_brand')
         
@@ -86,8 +82,5 @@ class ProductForm(forms.ModelForm):
         if brand == '3' and other_brand:
             cleaned_data['other_brand'] = other_brand.strip()
 
-        # Ensure that each attribute has a corresponding value
-        if attributes and not attribute_values:
-            raise forms.ValidationError("Please provide attribute values for the selected attributes.")
 
         return cleaned_data

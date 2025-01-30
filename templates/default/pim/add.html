@@ -39,17 +39,14 @@
 					<h1>Add New Product</h1>
 					<form method="post" enctype="multipart/form-data">
 						{% csrf_token %}
-						
-						<h3>Product Details</h3>
 						{{ form.as_p }}
-					
+
 						<h3>Upload Product Images</h3>
 						<table class="table table-bordered">
 							<thead>
 								<tr>
 									<th>Image</th>
 									<th>Title</th>
-									<th>Order</th>
 									<th>Default</th>
 									<th>Action</th>
 								</tr>
@@ -61,7 +58,6 @@
 									<tr class="form-row">
 										<td>{{ form.full_url }}</td>
 										<td>{{ form.title }}</td>
-										<td>{{ form.order_by }}</td>
 										<td class="text-center">{{ form.is_default }}</td>
 										<td><button type="button" class="btn btn-danger remove-image-form">Remove</button></td>
 									</tr>
@@ -86,16 +82,14 @@
     document.addEventListener("DOMContentLoaded", function() {
         const brandDropdown = document.getElementById('id_brand');
         const customBrandField = document.getElementById('id_other_brand');
-
         // Check if "Other" was selected and show the custom brand field
         brandDropdown.addEventListener('change', function() {
             if (brandDropdown.value === '3') {
-                customBrandField.style.display = 'block';  // Show custom brand input
+                customBrandField.style.display = 'block';
             } else {
-                customBrandField.style.display = 'none';   // Hide custom brand input
+                customBrandField.style.display = 'none';
             }
         });
-
         // Initial check in case "Other" is already selected
         if (brandDropdown.value === '3') {
             customBrandField.style.display = 'block';
