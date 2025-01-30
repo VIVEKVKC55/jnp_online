@@ -40,24 +40,24 @@
 					<form method="post" enctype="multipart/form-data">
 						{% csrf_token %}
 						
-						<!-- Product Form Fields -->
+						<h3>Product Details</h3>
 						{{ form.as_p }}
 					
-						<!-- Image Upload Fields -->
 						<h3>Upload Product Images</h3>
-						<div class="formset">
-							{{ product_image_formset.management_form }}  <!-- Management form for formset -->
+						<div id="image-formset">
+							{{ product_image_formset.management_form }}
 					
 							{% for form in product_image_formset %}
 								<div class="form-row">
-									{{ form.as_p }}  <!-- Render each form in the formset -->
+									{{ form.as_p }}
+									<button type="button" class="btn btn-danger remove-image-form">Remove</button>
 								</div>
 							{% endfor %}
 						</div>
 					
+						<button type="button" class="btn btn-secondary" id="add-image-form">Add More Images</button>
 						<button type="submit" class="btn btn-primary">Save Product</button>
 					</form>
-					
 					
 				</div>
 				<!-- /row -->
@@ -85,6 +85,44 @@
         if (brandDropdown.value === '3') {
             customBrandField.style.display = 'block';
         }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const formsetDiv = document.getElementById('image-formset');
+        const addButton = document.getElementById('add-image-form');
+        const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]'); // Get the hidden management form count
+
+        addButton.addEventListener('click', function () {
+            let currentFormCount = parseInt(totalForms.value);  // Get the current count
+            let emptyForm = formsetDiv.querySelector('.form-row'); // Get existing form
+
+            if (!emptyForm) {
+                alert("No existing form found!");
+                return;
+            }
+
+            let newForm = emptyForm.cloneNode(true); // Clone existing form
+            newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${currentFormCount}-`); 
+            newForm.innerHTML = newForm.innerHTML.replace(/_\d+_/g, `_${currentFormCount}_`);
+
+            formsetDiv.appendChild(newForm); // Add to the DOM
+            totalForms.value = currentFormCount + 1; // Update total form count
+
+            // Attach remove event to the new remove button
+            newForm.querySelector('.remove-image-form').addEventListener('click', function () {
+                newForm.remove();
+                totalForms.value = parseInt(totalForms.value) - 1;
+            });
+        });
+
+        // Attach remove event to existing remove buttons
+        document.querySelectorAll('.remove-image-form').forEach(button => {
+            button.addEventListener('click', function () {
+                this.parentElement.remove();
+                totalForms.value = parseInt(totalForms.value) - 1;
+            });
+        });
     });
 </script>
 {% endblock extrajs %}

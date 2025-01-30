@@ -6,13 +6,18 @@ class ProductImageForm(forms.ModelForm):
         model = ProductImages
         fields = ['full_url', 'title', 'order_by', 'is_default']
         widgets = {
-            'full_url': forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': False}),
+            'full_url': forms.FileInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'order_by': forms.NumberInput(attrs={'class': 'form-control'}),
             'is_default': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-ProductImageFormSet = forms.modelformset_factory(ProductImages, form=ProductImageForm, extra=1)
+ProductImageFormSet = forms.modelformset_factory(
+    ProductImages,
+    form=ProductImageForm,
+    extra=1,  # One empty form will always be rendered
+    can_delete=True  # Allow removing images dynamically
+)
 
 class ProductForm(forms.ModelForm):
     """
