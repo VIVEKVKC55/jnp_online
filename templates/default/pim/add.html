@@ -59,14 +59,14 @@
 										<td>{{ form.full_url }}</td>
 										<td>{{ form.title }}</td>
 										<td class="text-center">{{ form.is_default }}</td>
-										<td><button type="button" class="btn btn-danger remove-image-form">Remove</button></td>
+										<td><button type="button" class="btn btn-danger remove-image-form"><i class="fa fa-times" ></i></button></td>
 									</tr>
 								{% endfor %}
 							</tbody>
 						</table>
 						
 					
-						<button type="button" class="btn btn-secondary" id="add-image-form">Add More Images</button>
+						<button type="button" class="btn btn-secondary" id="add-image-form">Add More <i class="fa fa-picture-o" ></i></button>
 					
 						{% comment %} <h3>Product Attributes</h3>
 						<table class="table table-bordered">
@@ -94,7 +94,11 @@
 					
 						<button type="button" class="btn btn-secondary" id="add-attribute-form">Add More Attributes</button>
 					 {% endcomment %}
-						<button type="submit" class="btn btn-primary">Save Product</button>
+						<button type="submit" class="btn btn-primary" style="
+						display: block;
+						margin: auto;
+						margin-bottom: 12px;
+					">Save Product</button>
 					</form>
 					
 				</div>
