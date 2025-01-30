@@ -16,7 +16,7 @@ ProductImageFormSet = forms.modelformset_factory(
     ProductImages,
     form=ProductImageForm,
     extra=1,  # One empty form will always be rendered
-    can_delete=True  # Allow removing images dynamically
+    # can_delete=True  # Allow removing images dynamically
 )
 
 class ProductForm(forms.ModelForm):
