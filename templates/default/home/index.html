@@ -87,10 +87,10 @@
 												{% else %}
 													<img src="{% static '/img/no-image.jpg' %}" alt="Default Image">
 												{% endif %}
-												<div class="product-label">
+												{% comment %} <div class="product-label">
 													<img src="{% static '/img/verified-icon.svg' %}">
 													<span class="verified-badge">VERIFIED USER</span>
-												</div>
+												</div> {% endcomment %}
 											</div>
 											<div class="product-body">
 												<p class="product-category">{{ item.product.category }}</p>

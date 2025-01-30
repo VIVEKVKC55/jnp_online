@@ -1,0 +1,55 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %} Material Handling, Industrial Supplies, Tools, Safety Equipment & More {% endblock %}
+{% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
+{% block extrastyle %}
+<style>
+
+</style>
+{% endblock %}
+{% block ld_json %}
+{{home_schema|safe}}
+{% endblock %}
+
+{% block content %}
+        <div class="container mt-4">
+            <h2 class="text-center">{{ category.name }} Products</h2>
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.short_description|truncatechars:100 }}</p>
+                            <a href="{% url 'catalog:product_detail' product.id %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center">No products found in this category.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_obj.number }}</span>
+                    </li>
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+{% endblock content %}
