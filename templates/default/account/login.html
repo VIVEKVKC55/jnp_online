@@ -39,6 +39,7 @@
                 <input type="hidden" name="next" value="{{ request.GET.next }}">
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
+            <br>
             <p>Don't have an account? <a href="{% url 'account:register' %}">Register here</a></p>
             <p>Don't have an Business account? <a href="{% url 'business:business_register' %}">Register here</a></p>
         </div>

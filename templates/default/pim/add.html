@@ -67,6 +67,33 @@
 						
 					
 						<button type="button" class="btn btn-secondary" id="add-image-form">Add More Images</button>
+					
+						{% comment %} <h3>Product Attributes</h3>
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th>Attribute</th>
+									<th>Attribute Value</th>
+									<th>Order No.</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody id="attribute-formset">
+								{{ product_attribute_value_formset.management_form }}
+					
+								{% for form in product_attribute_value_formset %}
+									<tr class="form-row">
+										<td>{{ form.attribute }}</td>
+										<td>{{ form.attribute_value }}</td>
+										<td>{{ form.order_no }}</td>
+										<td><button type="button" class="btn btn-danger remove-attribute-form">Remove</button></td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					
+						<button type="button" class="btn btn-secondary" id="add-attribute-form">Add More Attributes</button>
+					 {% endcomment %}
 						<button type="submit" class="btn btn-primary">Save Product</button>
 					</form>
 					
