@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
-from django.http import HttpResponseForbidden
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.models import Product, ProductImages, ProductAttributeValue, ProductAttributes
 from business.models import BusinessDetails
@@ -33,9 +33,11 @@ class ProductCreateView(CreateView):
         try:
             business_details = BusinessDetails.objects.get(user=request.user)
             if not business_details.is_approved:
-                return HttpResponseForbidden("Your business details have not been approved.")
+                messages.error(request, "Your business details have not been approved.")
+                return redirect('home:home')
         except BusinessDetails.DoesNotExist:
-            return HttpResponseForbidden("You must have business details to access this page.")
+            messages.error(request, "You must have business details to access this page.")
+            return redirect('home:home')
 
         form = self.get_form()
         product_image_formset = ProductImageFormSet(queryset=ProductImages.objects.none())
@@ -45,7 +47,7 @@ class ProductCreateView(CreateView):
             'product_image_formset': product_image_formset,
             'product_attribute_value_formset': product_attribute_value_formset
         })
-
+    
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         # product_attribute_value_formset = ProductAttributeValueFormSet(request.POST)
