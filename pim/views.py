@@ -4,8 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.models import Product, ProductImages, ProductAttributeValue, ProductAttributes
-from .forms import ProductForm
-
+from .forms import ProductForm, ProductImageFormSet
 
 class ProductListView(LoginRequiredMixin, ListView):
     """
@@ -43,44 +42,59 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         
         return super().dispatch(request, *args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        """
+        Handle GET request to show the form.
+        """
+        form = self.get_form()
+        product_image_formset = ProductImageFormSet(queryset=ProductImages.objects.none())  # Empty queryset for formset
+        return self.render_to_response({'form': form, 'product_image_formset': product_image_formset})
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST request to save the form and formset data.
+        """
+        form = self.get_form()
+        product_image_formset = ProductImageFormSet(request.POST, request.FILES)
+
+        if form.is_valid() and product_image_formset.is_valid():
+            # Save the product object but don't commit to the database yet
+            product = form.save(commit=False)
+            product.created_by = self.request.user
+            product.save()
+
+            # Save all the images
+            for image_form in product_image_formset:
+                if image_form.cleaned_data.get('full_url'):
+                    image = image_form.save(commit=False)
+                    image.product = product
+                    image.save()
+
+            # Handle selected attributes and their values
+            attributes = form.cleaned_data.get('attributes_with_values')  # Get the selected attributes
+            attribute_values = form.cleaned_data.get('attribute_values')  # Get the provided values for attributes
+
+            if attributes and attribute_values:
+                # Split the provided values by line breaks, assuming each line corresponds to a value for an attribute
+                attribute_value_list = attribute_values.splitlines()
+
+                for i, attribute in enumerate(attributes):
+                    # Check if there are enough attribute values provided
+                    if i < len(attribute_value_list):
+                        # Save the attribute value in the ProductAttributeValue table
+                        ProductAttributeValue.objects.create(
+                            product=product,
+                            attribute=attribute,
+                            attribute_value=attribute_value_list[i]
+                        )
+
+            return redirect(self.success_url)
+
+        return self.render_to_response({'form': form, 'product_image_formset': product_image_formset})
+
     def form_valid(self, form):
         """
-        Automatically set the created_by user, handle product images, attributes, and attribute values.
+        The form has been validated, now save the product and the associated images and attributes.
         """
-        # Save the product object but don't commit to the database yet
-        product = form.save(commit=False)
-        product.created_by = self.request.user
-        product.save()
-
-        # Handle image uploads (if any)
-        images = self.request.FILES.getlist('images')  # Get all uploaded images
-        if images:
-            for image in images:
-                ProductImages.objects.create(
-                    product=product,
-                    full_url=image,
-                    title=image.name,  # Optional: You can customize the title
-                    is_enabled=True,
-                    is_default=True if images.index(image) == 0 else False  # Make the first image default
-                )
-
-        # Handle selected attributes and their values
-        attributes = form.cleaned_data.get('attributes_with_values')  # Get the selected attributes
-        attribute_values = form.cleaned_data.get('attribute_values')  # Get the provided values for attributes
-
-        if attributes and attribute_values:
-            # Split the provided values by line breaks, assuming each line corresponds to a value for an attribute
-            attribute_value_list = attribute_values.splitlines()
-
-            for i, attribute in enumerate(attributes):
-                # Check if there are enough attribute values provided
-                if i < len(attribute_value_list):
-                    # Save the attribute value in the ProductAttributeValue table
-                    ProductAttributeValue.objects.create(
-                        product=product,
-                        attribute=attribute,
-                        attribute_value=attribute_value_list[i]
-                    )
-
-        # Now that everything is handled, return the success response
+        # Product will be saved in the post method, so we don't need to save here again.
         return super().form_valid(form)

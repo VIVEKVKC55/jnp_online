@@ -25,6 +25,8 @@ class BusinessDetails(models.Model):
     business_name_board_photo = CloudinaryField('business_photos')
     authorized_person_photo = CloudinaryField('authorized_person_photos')
     mobile_number = models.CharField(max_length=15)
+    is_approved = models.BooleanField(default=False)
+    # approved_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.business_name

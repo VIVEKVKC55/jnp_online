@@ -37,28 +37,27 @@
 				<div class="row">
 					<!-- Product main img -->
 					<h1>Add New Product</h1>
-					<form method="POST" enctype="multipart/form-data">
+					<form method="post" enctype="multipart/form-data">
 						{% csrf_token %}
+						
+						<!-- Product Form Fields -->
 						{{ form.as_p }}
 					
-						{% comment %} <h3>Product Images</h3>
-						{{ images_formset.management_form }}
-						{% for form in images_formset %}
-							<div class="form-group">
-								{{ form.as_p }}
-							</div>
-						{% endfor %}
+						<!-- Image Upload Fields -->
+						<h3>Upload Product Images</h3>
+						<div class="formset">
+							{{ product_image_formset.management_form }}  <!-- Management form for formset -->
 					
-						<h3>Product Attributes</h3>
-						{{ attributes_formset.management_form }}
-						{% for form in attributes_formset %}
-							<div class="form-group">
-								{{ form.as_p }}
-							</div>
-						{% endfor %} {% endcomment %}
+							{% for form in product_image_formset %}
+								<div class="form-row">
+									{{ form.as_p }}  <!-- Render each form in the formset -->
+								</div>
+							{% endfor %}
+						</div>
 					
-						<button type="submit" class="btn btn-primary">Create Product</button>
+						<button type="submit" class="btn btn-primary">Save Product</button>
 					</form>
+					
 					
 				</div>
 				<!-- /row -->
@@ -67,3 +66,25 @@
 		</div>
 		<!-- /SECTION -->
 {% endblock content %}
+{% block extrajs %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const brandDropdown = document.getElementById('id_brand');
+        const customBrandField = document.getElementById('id_other_brand');
+
+        // Check if "Other" was selected and show the custom brand field
+        brandDropdown.addEventListener('change', function() {
+            if (brandDropdown.value === '3') {
+                customBrandField.style.display = 'block';  // Show custom brand input
+            } else {
+                customBrandField.style.display = 'none';   // Hide custom brand input
+            }
+        });
+
+        // Initial check in case "Other" is already selected
+        if (brandDropdown.value === '3') {
+            customBrandField.style.display = 'block';
+        }
+    });
+</script>
+{% endblock extrajs %}

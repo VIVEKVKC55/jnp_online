@@ -68,20 +68,11 @@ class ProductBrand(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250)
     image_url = CloudinaryField('brand', null=True, blank=True)
-    image_alt_tag = models.CharField(max_length=160, null=True, blank=True)
-    image_title = models.CharField(max_length=160, null=True, blank=True)
-    # canonical_url = models.CharField(max_length=500, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User,
                                       on_delete=models.CASCADE,
                                       related_name='brand_created',
                                       db_column='created_by')
-    updated = models.DateTimeField(auto_now=True)
-    updated_by = models.ForeignKey(User,
-                                    on_delete=models.CASCADE,
-                                    related_name='brand_updated',
-                                    db_column='updated_by',
-                                    null=True)
     def __str__(self):
         """Override string method and return custom data.
         
@@ -106,6 +97,7 @@ class Product(models.Model):
                               db_column='brand_id',
                               null=True,
                               blank=True)
+    other_brand = models.CharField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(Category,
                                 on_delete=models.CASCADE,
                                 related_name='pc_category',
@@ -114,19 +106,11 @@ class Product(models.Model):
     slug = models.SlugField(max_length=250)
     short_description = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    canonical_url = models.CharField(max_length=500, null=True, blank=True)
-
     is_deleted = models.BooleanField(default=False)
     is_enabled = models.BooleanField(default=True)
-
-    is_best_seller = models.BooleanField(default=False)
-
-    # meta_title = models.CharField(max_length=250, null=True, blank=True)
-    # meta_keyword = models.TextField(null=True, blank=True)
-    # meta_description = models.TextField(null=True, blank=True)
-
     is_home_featured = models.BooleanField(default=False)
-    is_featured = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+    approved_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User,
@@ -140,28 +124,9 @@ class Product(models.Model):
                                    db_column='updated_by',
                                    null=True, blank=True)
 
-    # @property
-    # def category_name(self):
-    #     return self.category.name
-
-    # @property
-    # def product_sku(self):
-    #     return self.part_product.filter(
-    #         # is_enabled=True,
-    #         is_deleted=False
-    #     ).all()
-
-    # @property
-    # def default_image(self):
-    #     return self.product_image.filter(
-    #         is_enabled=True
-    #     ).order_by('-is_default').first()
-
-    # @property
-    # def product_images(self):
-    #     return self.product_image.filter(
-    #         is_enabled=True
-    #     ).all().order_by('-is_default')
+    @property
+    def category_name(self):
+        return self.category.name
 
     def __str__(self):
         """Override string method and return custom data.
@@ -178,19 +143,13 @@ class Product(models.Model):
 
 
 class ProductImages(models.Model):
-    """This is the ProductImages Django Model for the pim_product_images database table."""
+    """This is the ProductImages Django Model for the product_images database table."""
 
     id = models.AutoField(primary_key=True)
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 related_name='product_image',
                                 db_column='product_id')
-    # product_part = models.ForeignKey(ProductPart,
-    #                                  on_delete=models.CASCADE,
-    #                                  related_name='part_image',
-    #                                  db_column='product_part_id',
-    #                                  null=True,
-    #                                  blank=True)
     full_url = CloudinaryField('product_photos', null=True, blank=True)
     title = models.CharField(max_length=250, null=True, blank=True)
     caption = models.CharField(max_length=250, null=True, blank=True)
