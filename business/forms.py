@@ -3,6 +3,18 @@ from django.contrib.auth.models import User
 from .models import BusinessDetails
 
 class RegistrationForm(forms.ModelForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter username'}),
+        label="Username"
+    )
+    authorized_person_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter authorized person name'}),
+        label="Authorized Person Name"
+    )
+    email_id = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
+        label="Email"
+    )
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
@@ -10,8 +22,8 @@ class RegistrationForm(forms.ModelForm):
         model = BusinessDetails
         fields = [
             'business_name', 'address', 'owner_name', 'authorized_person_name',
-            'business_location', 'type_of_business', 'dealing_with',
-            'business_name_board_photo', 'authorized_person_photo', 'mobile_number', 'email_id'
+            'business_location', 'type_of_business', 'dealing_with', 'mobile_number','username',
+            'email_id', 'password', 'confirm_password', 'business_name_board_photo', 'authorized_person_photo', 
         ]
     
     def __init__(self, *args, **kwargs):
@@ -32,12 +44,15 @@ class RegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         # Get the cleaned data from the form
         cleaned_data = self.cleaned_data
+        username = cleaned_data.get("username")
+        name = cleaned_data.get("authorized_person_name")
         password = cleaned_data.get("password")
         email = cleaned_data.get("email_id")
 
         # Create a new User instance or update if needed
         user = User.objects.create_user(
-            username=email,  # Use email as the username for the user
+            first_name=name,
+            username=username,
             email=email,
             password=password
         )

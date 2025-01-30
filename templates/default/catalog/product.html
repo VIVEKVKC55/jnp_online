@@ -3,7 +3,18 @@
 
 {% block title %} Material Handling, Industrial Supplies, Tools, Safety Equipment & More {% endblock %}
 {% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
-
+{% block extrastyle %}
+<style>
+	.custom-preview img {
+		width: 100%;  /* Standard width */
+		height: 300px;  /* Standard height */
+		object-fit: cover;  /* Ensures images fit properly */
+		border-radius: 5px;  /* Optional: Smooth corners */
+		display: block;
+		margin: auto;
+	}
+</style>
+{% endblock %}
 {% block ld_json %}
 {{home_schema|safe}}
 {% endblock %}
@@ -76,7 +87,11 @@
 					<div class="col-md-5">
 						<div class="product-details">
 							<h2 class="product-name">{{ product.name }}</h2>
-							<div>
+							<ul class="product-links">
+								<li>Category:</li>
+								<li><a href="#">{{ product.category }}</a></li>
+							</ul> 
+							{% comment %} <div>
 								<div class="product-rating">
 									<i class="fa fa-star"></i>
 									<i class="fa fa-star"></i>
@@ -85,11 +100,11 @@
 									<i class="fa fa-star-o"></i>
 								</div>
 								<a class="review-link" href="#">10 Review(s) | Add your review</a>
-							</div>
-							<div>
-								{% comment %} <h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3> {% endcomment %}
+							</div> {% endcomment %}
+							{% comment %}<div>
+								 <h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3> 
 								<span class="product-available">In Stock</span>
-							</div>
+							</div>{% endcomment %}
 
 							{% comment %} <div class="product-options">
 								<label>
@@ -106,31 +121,24 @@
 								</label>
 							</div>  {% endcomment %}
 
-							 <div class="add-to-cart">
-								{% comment %} <div class="qty-label">
+							 {% comment %} <div class="add-to-cart">
+								<div class="qty-label">
 									Qty
 									<div class="input-number">
 										<input type="number">
 										<span class="qty-up">+</span>
 										<span class="qty-down">-</span>
 									</div>
-								</div> {% endcomment %}
+								</div>
 								<button class="add-to-cart-btn"><i class="fa fa-phone"></i>phone number</button>
-							</div> 
+							</div>  {% endcomment %}
 
 							{% comment %} <ul class="product-btns">
 								<li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
 								<li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
 							</ul> {% endcomment %}
 
-							<ul class="product-links">
-								<li>Category:</li>
-								<li><a href="#">{{ product.category }}</a></li>
-							</ul> 
 							<br>
-							<p>{{ product.short_description }}</p>
-
-							<p>{{ product.description }}</p>
 							{% comment %} <ul class="product-links">
 								<li>Share:</li>
 								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
@@ -153,6 +161,8 @@
 								<a href="{% url 'account:login' %}?next={{ request.path }}">Please Login for More details</a>
 								{% endif %}
 							</div>
+							<br>
+							<p>{{ product.short_description }}</p>
 						</div>
 					</div>
 					<!-- /Product details -->
@@ -162,9 +172,9 @@
 						<div id="product-tab">
 							<!-- product tab nav -->
 							<ul class="tab-nav">
-								<li class="active"><a data-toggle="tab" href="#tab1">Contect</a></li>
+								<li class="active"><a data-toggle="tab" href="#tab1">Businuss Info.</a></li>
 								<li><a data-toggle="tab" href="#tab2">Details</a></li>
-								<li><a data-toggle="tab" href="#tab3">Reviews (3)</a></li>
+								<li><a data-toggle="tab" href="#tab3">Contect</a></li>
 							</ul>
 							<!-- /product tab nav -->
 
@@ -174,7 +184,7 @@
 								<div id="tab1" class="tab-pane fade in active">
 									<div class="row">
 										<div class="col-md-12">
-											<p>{{ product.description }}</p>
+										  {{businuss_details.address}}
 										</div>
 									</div>
 								</div>
@@ -187,14 +197,7 @@
 											<div>
 												{% if user.is_authenticated %}
 												<h4>Product Details</h4>
-												<ul>
-													{% for attribute in attributes %}
-														<li>
-															<strong>{{ attribute.attribute.attribute_name }}:</strong> 
-															{{ attribute.attribute_value }}
-														</li>
-													{% endfor %}
-												</ul>
+												<p>{{ product.description }}</p>
 												{% else %}
 												<a href="{% url 'account:login' %}">Plese Login for details</a>
 												{% endif %}

@@ -8,13 +8,13 @@ def product_detail(request, pk):
     images = ProductImages.objects.filter(product=product, is_enabled=True).order_by('order_by')
     attributes = ProductAttributeValue.objects.filter(product=product)
 
-    # businuss_details = BusinessDetails.objects.get(user=product.created_by)
+    businuss_details = BusinessDetails.objects.get(user=product.created_by)
 
     context = {
         'product': product,
         'images': images,
         'attributes': attributes,
-        # 'businuss_details': businuss_details,
+        'businuss_details': businuss_details,
     }
     return render(request, 'default/catalog/product.html', context)
 
