@@ -40,43 +40,45 @@ class ProductCreateView(CreateView):
             return redirect('home:home')
 
         form = self.get_form()
-        product_image_formset = ProductImageFormSet(queryset=ProductImages.objects.none())
-        product_attribute_value_formset = ProductAttributeValueFormSet(queryset=ProductAttributeValue.objects.none())
-        return self.render_to_response({
-            'form': form, 
-            'product_image_formset': product_image_formset,
-            'product_attribute_value_formset': product_attribute_value_formset
-        })
-    
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        # product_attribute_value_formset = ProductAttributeValueFormSet(request.POST)
-        product_image_formset = ProductImageFormSet(request.POST, request.FILES)
-        # product_attribute_value_formset.is_valid() and
-        if form.is_valid() and product_image_formset.is_valid():
-            # Save the main product form
-            product = form.save(commit=False)
-            product.created_by = self.request.user
-            product.save()
-
-            # Save all the valid product attribute value forms
-            # for attribute_form in product_attribute_value_formset:
-            #     if attribute_form.cleaned_data.get('attribute_value'):
-            #         attribute_value = attribute_form.save(commit=False)
-            #         attribute_value.product = product
-            #         attribute_value.save()
-
-            # Save all the valid product image forms
-            for image_form in product_image_formset:
-                if image_form.cleaned_data.get('full_url'):
-                    image = image_form.save(commit=False)
-                    image.product = product
-                    image.save()
-
-            return redirect(self.success_url)
+        product_image_formset = ProductImageFormSet(queryset=ProductImages.objects.none(), prefix='images')
+        product_attribute_value_formset = ProductAttributeValueFormSet(queryset=ProductAttributeValue.objects.none(), prefix='attributes')
 
         return self.render_to_response({
             'form': form,
             'product_image_formset': product_image_formset,
-            # 'product_attribute_value_formset': product_attribute_value_formset,
+            'product_attribute_value_formset': product_attribute_value_formset
+        })
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        product_image_formset = ProductImageFormSet(request.POST, request.FILES, prefix='images')
+        product_attribute_value_formset = ProductAttributeValueFormSet(request.POST, prefix='attributes')
+
+        if form.is_valid() and product_image_formset.is_valid() and product_attribute_value_formset.is_valid():
+            # Save the product first
+            product = form.save(commit=False)
+            product.created_by = self.request.user
+            product.save()
+
+            # Save product images
+            for image_form in product_image_formset:
+                if image_form.cleaned_data.get('full_url'):  # Ensure there's an image
+                    image = image_form.save(commit=False)
+                    image.product = product
+                    image.save()
+
+            # Save product attributes
+            for attribute_form in product_attribute_value_formset:
+                if attribute_form.cleaned_data.get('attribute_value'):  # Ensure there's an attribute value
+                    attribute_value = attribute_form.save(commit=False)
+                    attribute_value.product = product
+                    attribute_value.save()
+
+            return redirect(self.success_url)
+
+        # If validation fails, re-render the form
+        return self.render_to_response({
+            'form': form,
+            'product_image_formset': product_image_formset,
+            'product_attribute_value_formset': product_attribute_value_formset,
         })
