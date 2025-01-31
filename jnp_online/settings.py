@@ -15,6 +15,7 @@ import cloudinary.uploader
 import cloudinary.api
 from pathlib import Path
 import pymysql
+from dotenv import load_dotenv
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,12 +26,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-v+6dk(rytib*gh*qfth$xwwnqm((#vjcf1(um+6k!0kc3$ugie"
+# SECRET_KEY = ""
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+load_dotenv()
+
+# Now use them in Django settings
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG') == 'True'
 
 
 # Application definition
@@ -86,17 +92,26 @@ WSGI_APPLICATION = "jnp_online.wsgi.application"
 
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'bjvhtaac6gj05avdxyvi',
+#         'USER': 'utsaon9hsodbfo68',
+#         'PASSWORD': 't9TBUEGnonD1OXM4aQ81',
+#         'HOST': 'bjvhtaac6gj05avdxyvi-mysql.services.clever-cloud.com',
+#         'PORT': '3306',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bjvhtaac6gj05avdxyvi',
-        'USER': 'utsaon9hsodbfo68',
-        'PASSWORD': 't9TBUEGnonD1OXM4aQ81',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': 'bjvhtaac6gj05avdxyvi-mysql.services.clever-cloud.com',
         'PORT': '3306',
     }
 }
-
 
 
 # Password validation
@@ -150,24 +165,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# CLOUDINARY_STORAGE = {
-#     'CLOUD_NAME': 'dftm375br',
-#     'API_KEY': '659457749696817',
-#     'API_SECRET': 'p58E9Q9kgJqUl0YOTP_iIP7aOIQ',
-# }
 cloudinary.config(
-    cloud_name="dftm375br",
-    api_key="659457749696817",
-    api_secret="p58E9Q9kgJqUl0YOTP_iIP7aOIQ"
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
 )
 # Set Cloudinary as the default file storage
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+# Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'vkc7599@gmail.com'
-EMAIL_HOST_PASSWORD = 'rlpl eqtd rxhh byfw'
-DEFAULT_FROM_EMAIL = 'vkc7599@gmail.com'
-ADMIN_EMAIL = 'vkc7599@gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
+ADMIN_EMAIL = os.getenv('EMAIL_HOST_USER')
