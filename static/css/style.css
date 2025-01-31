@@ -1020,7 +1020,7 @@ textarea.input {
   right: 1px;
   bottom: 1px;
   padding: 15px;
-  background: #1e1f29;
+  /* background: #1e1f29; */
   text-align: center;
   -webkit-transform: translateY(0%);
   -ms-transform: translateY(0%);
