@@ -49,8 +49,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = [
-            'name', 'brand', 'other_brand', 'category', 'short_description',
-            'description', 'is_enabled',
+            'name', 'brand', 'other_brand', 'category', 'short_description', 'description'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -58,15 +57,14 @@ class ProductForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-control'}),
             'short_description': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 2,
+                'rows': 1,
                 'placeholder': 'Enter a brief description'
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 4,
+                'rows': 2,
                 'placeholder': 'Enter a detailed description'
             }),
-            'is_enabled': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def clean(self):

@@ -91,6 +91,14 @@
 								<li>Category:</li>
 								<li><a href="#">{{ product.category }}</a></li>
 							</ul> 
+							<ul class="product-links">
+								<li>Brand:</li>
+								{% if product.brand.name == "Other" %}
+									<li>{{ product.other_brand }}</li>
+								{% else %}
+									<li>{{ product.brand }}</li>
+								{% endif %}
+							</ul>
 							{% comment %} <div>
 								<div class="product-rating">
 									<i class="fa fa-star"></i>

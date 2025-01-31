@@ -78,51 +78,50 @@
 							<div id="tab1" class="tab-pane active">
 								<div class="products-slick" data-nav="#slick-nav-1">
 									{% for item in products %}
-										<!-- product -->
+										{% if item.product.is_home_featured %}
 										<div class="product">
 											<a href="{% url 'catalog:product_detail' pk=item.product.id %}" class="product-link">
-											<div class="product-img">
-												{% if item.image %}
-													<img src="{{item.image.full_url.url}}" alt="{{ item.product.name }}">
-												{% else %}
-													<img src="{% static '/img/no-image.jpg' %}" alt="Default Image">
-												{% endif %}
-												{% comment %} <div class="product-label">
-													<img src="{% static '/img/verified-icon.svg' %}">
-													<span class="verified-badge">VERIFIED USER</span>
-												</div> {% endcomment %}
-											</div>
-											<div class="product-body">
-												<p class="product-category">{{ item.product.category }}</p>
-												<h3 class="product-name"><a href="{% url 'catalog:product_detail' pk=item.product.id %}">{{ item.product.name }}</a></h3>
-												{% comment %} <h4 class="product-price">$980.00 <del
-														class="product-old-price">$990.00</del></h4> {% endcomment %}
-												<div class="product-rating">
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
+												<div class="product-img">
+													{% if item.image %}
+														<img src="{{item.image.full_url.url}}" alt="{{ item.product.name }}">
+													{% else %}
+														<img src="{% static '/img/no-image.jpg' %}" alt="Default Image">
+													{% endif %}
+													<div class="product-label">
+														<span class="">FEATURED</span>
+													</div>
 												</div>
-												<div class="product-btns">
-													<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span
-															class="tooltipp">add to wishlist</span></button>
-													<button class="add-to-compare"><i class="fa fa-exchange"></i><span
-															class="tooltipp">add to compare</span></button>
-													<button class="quick-view"><i class="fa fa-eye"></i><span
-															class="tooltipp">quick view</span></button>
+												<div class="product-body">
+													<p class="product-category">{{ item.product.category }}</p>
+													<h3 class="product-name"><a href="{% url 'catalog:product_detail' pk=item.product.id %}">{{ item.product.name }}</a></h3>
+													{% comment %} <h4 class="product-price">$980.00 <del
+															class="product-old-price">$990.00</del></h4> {% endcomment %}
+													<div class="product-rating">
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+														<i class="fa fa-star"></i>
+													</div>
+													<div class="product-btns">
+														<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span
+																class="tooltipp">add to wishlist</span></button>
+														<button class="add-to-compare"><i class="fa fa-exchange"></i><span
+																class="tooltipp">add to compare</span></button>
+														<button class="quick-view"><i class="fa fa-eye"></i><span
+																class="tooltipp">quick view</span></button>
+													</div>
 												</div>
-											</div>
-											<div class="add-to-cart">
-												<a href="{% url 'catalog:product_detail' pk=item.product.id %}">
-													<button class="add-to-cart-btn">
-														<i class="fa fa-shopping-cart"></i> View Deatail
-													</button>
-												</a>
-											</div>
-										</a>
+												<div class="add-to-cart">
+													<a href="{% url 'catalog:product_detail' pk=item.product.id %}">
+														<button class="add-to-cart-btn">
+															<i class="fa fa-shopping-cart"></i> View Deatail
+														</button>
+													</a>
+												</div>
+											</a>
 										</div>
-										<!-- /product -->
+										{% endif %}
 									{% endfor %}
 								</div>
 								<div id="slick-nav-1" class="products-slick-nav"></div>
@@ -133,7 +132,62 @@
 				</div>
 				<!-- Products tab & slick -->
 			</div>
+			<br>
+			<br>
+			<br>
 			<!-- /row -->
+			<div class="row">
+				<div class="col-md-12">
+					<div class="section-title">
+						<h3 class="title">All Products</h3>
+					</div>
+				</div>
+				<!-- Products tab & slick -->
+				<div class="col-md-12">
+					<div class="row">
+						{% for item in products %}
+							<div class="panel panel-default" style="border: none;"  >
+								<div class="panel-body">
+									<div class="row ">
+										<div class="col-xs-3">
+												<div id="product-main-img">
+													{% if item.image %}
+														{% comment %} {% for img in item.images %}
+														<!-- <div class="product-preview"> -->
+														<div class="">
+															<img src="{{img.full_url.url}}" class="img-responsive img-thumbnail" alt="{{ img.title }}">
+														</div>
+														{% endfor %} {% endcomment %}
+														<img src="{{item.image.full_url.url}}" class="img-responsive img-thumbnail" alt="{{ img.title }}">
+													{% else %}
+														<img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail" alt="Default Image">
+													{% endif %}
+												</div>
+											{% comment %} <img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail"  alt="..."> {% endcomment %}
+										</div>
+										<a href="{% url 'catalog:product_detail' item.product.id %}" class="product-link">
+											<div class="col-xs-9">
+												<h4 class="panel-title">{{ item.product.name }}</h4><br>
+												<ul class="product-links">
+													{% if item.product.brand.name == "Other" %}
+														<li>Product Brand: {{ item.product.other_brand }}</li>
+													{% else %}
+														<li>Product Brand: {{ item.product.brand }}</li>
+													{% endif %}
+
+												</ul>
+												<p>{{ item.product.short_description|truncatechars:100 }}</p>
+												<p><small class="text-muted">Last updated 3 mins ago</small></p>
+											</div>
+										</a>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<!-- Products tab & slick -->
+			</div>
 		</div>
 		<!-- /container -->
 	</div>

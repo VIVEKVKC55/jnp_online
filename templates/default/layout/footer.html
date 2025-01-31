@@ -85,11 +85,22 @@
     <footer class="mobile-footer d-md-none">
         <nav class="footer-nav">
             <ul class="footer-menu">
-                <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
-                <li><a href="#"><i class="fa fa-file"></i>Search</a></li>
-                <li><a href="#"><i class="fa fa-th"></i>Post an ad</a></li>
+                <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-search"></i>Search</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i>ADD Product</a></li>
+                {% else %}
+                    <li><a href=""><i class="fa fa-plus-square"></i>ADD Product</a></li>
+                {% endif %}
+                {% comment %} <li><a href="#"><i class="fa fa-plus-square"></i>Post an ad</a></li> {% endcomment %}
                 <!-- <li><a href="#"><i class="fa fa-comments"></i><br>Chats</a></li> -->
-                <li><a href="#"><i class="fa fa-cog"></i>Menu</a></li>
+                <li class="menu-toggle">
+                    <a href="#">
+                        <i class="fa fa-bars"></i>
+                        <span>Menu</span>
+                    </a>
+                </li>
+                {% comment %} <li><a href="#"><i class="fa fa-bars"></i>Menu</a></li> {% endcomment %}
             </ul>
         </nav>
     </footer>

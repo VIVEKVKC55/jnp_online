@@ -32,75 +32,77 @@
 		<!-- SECTION -->
 		<div class="section">
 			<!-- container -->
-			<div class="container">
+			<div class="container mt-5">
 				<!-- row -->
-				<div class="row">
-					<!-- Product main img -->
-					<h1>Add New Product</h1>
-					<form method="post" enctype="multipart/form-data">
-						{% csrf_token %}
-						{{ form.as_p }}
-
-						<h3>Upload Product Images</h3>
-						<table class="table table-bordered">
-							<thead>
-								<tr>
-									<th>Image</th>
-									<th>Title</th>
-									<th>Default</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody id="image-formset">
-								{{ product_image_formset.management_form }}
-						
-								{% for form in product_image_formset %}
-									<tr class="form-row">
-										<td>{{ form.full_url }}</td>
-										<td>{{ form.title }}</td>
-										<td class="text-center">{{ form.is_default }}</td>
-										<td><button type="button" class="btn btn-danger remove-image-form"><i class="fa fa-times" ></i></button></td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-						
+				<div class="row justify-content-center">
+					<div class="">
+						<div class="card shadow-lg p-4">
+							<h3 class="text-center mb-4">Create Product</h3>
+							<form method="post" enctype="multipart/form-data">
+								{% csrf_token %}
+								{{ form.as_p }}
+								
+								<h4 class="text-center mb-4">Upload Product Images</h4>
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th class="text-center">Image</th>
+											<th class="text-center">Title</th>
+											<th class="text-center">Default</th>
+											<th class="text-center">Action</th>
+										</tr>
+									</thead>
+									<tbody id="image-formset">
+										{{ product_image_formset.management_form }}
+								
+										{% for form in product_image_formset %}
+											<tr class="form-row">
+												<td>{{ form.full_url }}</td>
+												<td>{{ form.title }}</td>
+												<td class="text-center">{{ form.is_default }}</td>
+												<td><button type="button" class="btn btn-danger remove-image-form"><i class="fa fa-times" ></i></button></td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+								
+							
+								<button type="button" class="btn btn-primary" id="add-image-form">Add More <i class="fa fa-picture-o" ></i></button>
 					
-						<button type="button" class="btn btn-secondary" id="add-image-form">Add More <i class="fa fa-picture-o" ></i></button>
-					
-						{% comment %} <h3>Product Attributes</h3>
-						<table class="table table-bordered">
-							<thead>
-								<tr>
-									<th>Attribute</th>
-									<th>Attribute Value</th>
-									<th>Order No.</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody id="attribute-formset">
-								{{ product_attribute_value_formset.management_form }}
-					
-								{% for form in product_attribute_value_formset %}
-									<tr class="form-row">
-										<td>{{ form.attribute }}</td>
-										<td>{{ form.attribute_value }}</td>
-										<td>{{ form.order_no }}</td>
-										<td><button type="button" class="btn btn-danger remove-attribute-form">Remove</button></td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					
-						<button type="button" class="btn btn-secondary" id="add-attribute-form">Add More Attributes</button>
-					 {% endcomment %}
-						<button type="submit" class="btn btn-primary" style="
-						display: block;
-						margin: auto;
-						margin-bottom: 12px;
-					">Save Product</button>
-					</form>
-					
+								{% comment %} <h3>Product Attributes</h3>
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th>Attribute</th>
+											<th>Attribute Value</th>
+											<th>Order No.</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody id="attribute-formset">
+										{{ product_attribute_value_formset.management_form }}
+							
+										{% for form in product_attribute_value_formset %}
+											<tr class="form-row">
+												<td>{{ form.attribute }}</td>
+												<td>{{ form.attribute_value }}</td>
+												<td>{{ form.order_no }}</td>
+												<td><button type="button" class="btn btn-danger remove-attribute-form">Remove</button></td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							
+								<button type="button" class="btn btn-secondary" id="add-attribute-form">Add More Attributes</button>
+							{% endcomment %}
+								<button type="submit" class="btn btn-success w-100" style="
+								display: block;
+								margin: auto;
+								margin-bottom: 12px;
+							">Save Product</button>
+							</form>
+						</div>
+					</div>
 				</div>
 				<!-- /row -->
 			</div>
@@ -131,38 +133,49 @@
     document.addEventListener("DOMContentLoaded", function () {
         const formsetDiv = document.getElementById('image-formset');
         const addButton = document.getElementById('add-image-form');
-        const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]'); // Get the hidden management form count
+        const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]'); // Hidden total forms field
+        const maxForms = 5; // Maximum number of forms allowed
+
+        function updateRemoveButtons() {
+            const removeButtons = document.querySelectorAll('.remove-image-form');
+            
+            removeButtons.forEach((button, index) => {
+                button.disabled = (removeButtons.length === 1); // Disable remove button if only one form remains
+                button.addEventListener('click', function () {
+                    if (removeButtons.length > 1) {
+                        this.closest('.form-row').remove();
+                        totalForms.value = parseInt(totalForms.value) - 1;
+                        updateRemoveButtons();
+                    }
+                });
+            });
+        }
 
         addButton.addEventListener('click', function () {
-            let currentFormCount = parseInt(totalForms.value);  // Get the current count
-            let emptyForm = formsetDiv.querySelector('.form-row'); // Get existing form
+            let currentFormCount = parseInt(totalForms.value);  
+
+            if (currentFormCount >= maxForms) {
+                alert("You can only add up to 5 images.");
+                return;
+            }
+
+            let emptyForm = formsetDiv.querySelector('.form-row'); // Get an existing form
 
             if (!emptyForm) {
                 alert("No existing form found!");
                 return;
             }
 
-            let newForm = emptyForm.cloneNode(true); // Clone existing form
+            let newForm = emptyForm.cloneNode(true); // Clone the form
             newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${currentFormCount}-`); 
             newForm.innerHTML = newForm.innerHTML.replace(/_\d+_/g, `_${currentFormCount}_`);
-
-            formsetDiv.appendChild(newForm); // Add to the DOM
-            totalForms.value = currentFormCount + 1; // Update total form count
-
-            // Attach remove event to the new remove button
-            newForm.querySelector('.remove-image-form').addEventListener('click', function () {
-                newForm.remove();
-                totalForms.value = parseInt(totalForms.value) - 1;
-            });
+            
+            formsetDiv.appendChild(newForm); // Append new form
+            totalForms.value = currentFormCount + 1; // Update total count
+            updateRemoveButtons(); // Update remove button states
         });
 
-        // Attach remove event to existing remove buttons
-        document.querySelectorAll('.remove-image-form').forEach(button => {
-            button.addEventListener('click', function () {
-                this.parentElement.remove();
-                totalForms.value = parseInt(totalForms.value) - 1;
-            });
-        });
+        updateRemoveButtons(); // Initialize remove button state on page load
     });
 </script>
 {% endblock extrajs %}
