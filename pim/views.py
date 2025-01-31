@@ -62,6 +62,7 @@ class ProductCreateView(CreateView):
 
             # Save product images
             for image_form in product_image_formset:
+                print('image_form',image_form.changed_data)
                 if image_form.cleaned_data.get('full_url'):  # Ensure there's an image
                     image = image_form.save(commit=False)
                     image.product = product
@@ -69,6 +70,7 @@ class ProductCreateView(CreateView):
 
             # Save product attributes
             for attribute_form in product_attribute_value_formset:
+                print('attribute_form',attribute_form.changed_data)
                 if attribute_form.cleaned_data.get('attribute_value'):  # Ensure there's an attribute value
                     attribute_value = attribute_form.save(commit=False)
                     attribute_value.product = product

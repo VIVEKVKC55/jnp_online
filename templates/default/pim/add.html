@@ -59,13 +59,14 @@
 												<td>{{ form.full_url }}</td>
 												<td>{{ form.title }}</td>
 												<td>{{ form.is_default }}</td>
-												<td><button type="button" class="btn btn-danger remove-image-form">Remove</button></td>
+												<td><button type="button" class="btn btn-danger remove-image-form"><i class="fa fa-times" ></i></button></td>
 											</tr>
 										{% endfor %}
 									</tbody>
 								</table>
-								<button type="button" class="btn btn-primary" id="add-image-form">Add Image</button>
-
+								<button type="button" class="btn btn-primary" id="add-image-form">Add More <i class="fa fa-picture-o" ></i></button>
+								<br>
+								<br>
 								<h4>Product Attributes</h4>
 								<table class="table table-bordered">
 									<thead>
@@ -83,14 +84,18 @@
 												<td>{{ form.attribute }}</td>
 												<td>{{ form.attribute_value }}</td>
 												<td>{{ form.order_no }}</td>
-												<td><button type="button" class="btn btn-danger remove-attribute-form">Remove</button></td>
+												<td><button type="button" class="btn btn-danger remove-attribute-form"><i class="fa fa-times" ></i></button></td>
 											</tr>
 										{% endfor %}
 									</tbody>
 								</table>
-								<button type="button" class="btn btn-secondary" id="add-attribute-form">Add Attribute</button>
+								<button type="button" class="btn btn-primary" id="add-attribute-form">Add Attribute</button>
 
-								<button type="submit" class="btn btn-success mt-3">Save Product</button>
+								<button type="submit" class="btn btn-success w-100" style="
+								display: block;
+								margin: auto;
+								margin-bottom: 12px;
+							">Save Product</button>
 							</form>
 
 						</div>
@@ -123,9 +128,58 @@
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const formsetDiv = document.getElementById('attribute-formset');
+        const addButton = document.getElementById('add-attribute-form');
+        const totalForms = document.querySelector('[name="attributes-TOTAL_FORMS"]'); // Hidden total forms field
+        const maxForms = 5; // Maximum number of forms allowed
+
+        function updateRemoveButtons() {
+            const removeButtons = document.querySelectorAll('.remove-attribute-form');
+            
+            removeButtons.forEach((button, index) => {
+                button.disabled = (removeButtons.length === 1); // Disable remove button if only one form remains
+                button.addEventListener('click', function () {
+                    if (removeButtons.length > 1) {
+                        this.closest('.form-row-attr').remove();
+                        totalForms.value = parseInt(totalForms.value) - 1;
+                        updateRemoveButtons();
+                    }
+                });
+            });
+        }
+
+        addButton.addEventListener('click', function () {
+            let currentFormCount = parseInt(totalForms.value);  
+
+            if (currentFormCount >= maxForms) {
+                alert("You can only add up to 5 images.");
+                return;
+            }
+
+            let emptyForm = formsetDiv.querySelector('.form-row-attr'); // Get an existing form
+
+            if (!emptyForm) {
+                alert("No existing form found!");
+                return;
+            }
+
+            let newForm = emptyForm.cloneNode(true); // Clone the form
+            newForm.innerHTML = newForm.innerHTML.replace(/-attributes-\d+-/g, `attributes-${currentFormCount}-`); 
+            newForm.innerHTML = newForm.innerHTML.replace(/_attributes__\d+_/g, `attributes_${currentFormCount}_`);
+            
+            formsetDiv.appendChild(newForm); // Append new form
+            totalForms.value = currentFormCount + 1; // Update total count
+            updateRemoveButtons(); // Update remove button states
+        });
+
+        updateRemoveButtons(); // Initialize remove button state on page load
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
         const formsetDiv = document.getElementById('image-formset');
         const addButton = document.getElementById('add-image-form');
-        const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]'); // Hidden total forms field
+        const totalForms = document.querySelector('[name="images-TOTAL_FORMS"]'); // Hidden total forms field
         const maxForms = 5; // Maximum number of forms allowed
 
         function updateRemoveButtons() {
@@ -159,8 +213,8 @@
             }
 
             let newForm = emptyForm.cloneNode(true); // Clone the form
-            newForm.innerHTML = newForm.innerHTML.replace(/-\d+-/g, `-${currentFormCount}-`); 
-            newForm.innerHTML = newForm.innerHTML.replace(/_\d+_/g, `_${currentFormCount}_`);
+            newForm.innerHTML = newForm.innerHTML.replace(/-images-\d+-/g, `-images-${currentFormCount}-`); 
+            newForm.innerHTML = newForm.innerHTML.replace(/_images_\d+_/g, `_images_${currentFormCount}_`);
             
             formsetDiv.appendChild(newForm); // Append new form
             totalForms.value = currentFormCount + 1; // Update total count
