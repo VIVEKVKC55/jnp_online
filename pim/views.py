@@ -20,7 +20,7 @@ class ProductListView(LoginRequiredMixin, ListView):
         """
         Customize the queryset to return only products created by the current user.
         """
-        return Product.objects.filter(created_by=self.request.user).select_related('category').order_by('name')
+        return Product.objects.filter(created_by=self.request.user).select_related('category').order_by('-id')
 
 
 class ProductCreateView(CreateView):
