@@ -83,9 +83,9 @@
 											<a href="{% url 'catalog:product_detail' pk=item.product.id %}" class="product-link">
 												<div class="product-img">
 													{% if item.image %}
-														<img src="{{item.image.full_url.url}}" alt="{{ item.product.name }}">
+														<img src="{{item.image.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ item.product.name }}">
 													{% else %}
-														<img src="{% static '/img/no-image.jpg' %}" alt="Default Image">
+														<img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail fixed-image" alt="Default Image">
 													{% endif %}
 													<div class="product-label">
 														<span class="">FEATURED</span>
@@ -155,15 +155,15 @@
 														{% comment %} {% for img in item.images %}
 														<!-- <div class="product-preview"> -->
 														<div class="">
-															<img src="{{img.full_url.url}}" class="img-responsive img-thumbnail" alt="{{ img.title }}">
+															<img src="{{img.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ img.title }}">
 														</div>
 														{% endfor %} {% endcomment %}
-														<img src="{{item.image.full_url.url}}" class="img-responsive img-thumbnail" alt="{{ img.title }}">
+														<img src="{{item.image.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ img.title }}">
 													{% else %}
-														<img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail" alt="Default Image">
+														<img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail fixed-image" alt="Default Image">
 													{% endif %}
 												</div>
-											{% comment %} <img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail"  alt="..."> {% endcomment %}
+											{% comment %} <img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail fixed-image"  alt="..."> {% endcomment %}
 										</div>
 										<a href="{% url 'catalog:product_detail' item.product.id %}" class="product-link">
 											<div class="col-xs-9">

@@ -146,6 +146,15 @@
 					<li class="active"><a href="/">Home</a></li>
 					<li><a href="{% url 'catalog:cat_products' slug="laptop" %}">Laptops</a></li>
 					<li><a href="#">Spare Parts</a></li>
+					<li><a href="#"><i class="fa fa-user"></i> My Account</a></li>
+					<li><a href="#"><i class="fa fa-cog"></i> Setting</a></li>
+					<li>
+						{% if user.is_authenticated %}
+							<a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i> Logout</a>
+						{% else %}
+							<a href="{% url 'account:login' %}"><i class="fa fa-sign-in"></i> Login</a>
+						{% endif %}
+					</li>
 				</ul>
 				<!-- /NAV -->
 			</div>
