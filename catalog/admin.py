@@ -3,7 +3,7 @@ from .models import Category, ProductBrand,ProductAttributes, ProductImages, Pro
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug', 'parent', 'include_in_menu')
+    list_display = ( 'name', 'slug', 'fa_icon_class', 'parent', 'include_in_menu')
     search_fields = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
     list_filter = ('created', 'updated')

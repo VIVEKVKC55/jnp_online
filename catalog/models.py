@@ -23,7 +23,7 @@ class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250)
-    category_group_id = models.IntegerField(default=0)
+    fa_icon_class = models.CharField(max_length=200)
     include_in_menu = models.BooleanField(default=False)
     parent = models.ForeignKey('self',
                                on_delete=models.CASCADE,
