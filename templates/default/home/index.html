@@ -175,7 +175,7 @@
 
 												</ul>
 												<p>{{ product.short_description|truncatechars:100 }}</p>
-												<p><small class="text-muted">Last updated 3 mins ago</small></p>
+												<p><small class="text-muted">Last updated {{ product.updated|timesince }} ago</small></p>
 											</div>
 										</a>
 									</div>
