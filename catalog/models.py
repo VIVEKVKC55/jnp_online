@@ -24,7 +24,7 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250)
     category_group_id = models.IntegerField(default=0)
-    # include_in_menu = models.BooleanField(default=False)
+    include_in_menu = models.BooleanField(default=False)
     parent = models.ForeignKey('self',
                                on_delete=models.CASCADE,
                                related_name='children',
@@ -32,12 +32,7 @@ class Category(models.Model):
                                null=True,
                                blank=True)
     # is_active = models.BooleanField(default=False)
-    # is_deleted = models.BooleanField(default=False)
-    # is_featured = models.BooleanField(default=False)
     image_url = CloudinaryField('category', null=True, blank=True)
-    image_alt_tag = models.CharField(max_length=160, null=True, blank=True)
-    image_title = models.CharField(max_length=160, null=True, blank=True)
-    canonical_url = models.CharField(max_length=500, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User,
                                    on_delete=models.CASCADE,
@@ -139,6 +134,15 @@ class Product(models.Model):
     @property
     def category_name(self):
         return self.category.name
+    
+    # @property
+    # def images(self):
+    #     """Returns all related images for the product."""
+    #     return self.product_image.filter(is_enabled=True).order_by('-is_default', 'order_by')
+    @property
+    def image(self):
+        """Returns the default image or the first available image."""
+        return self.product_image.filter(is_enabled=True).order_by('-is_default', 'order_by').first()
 
     def __str__(self):
         """Override string method and return custom data.

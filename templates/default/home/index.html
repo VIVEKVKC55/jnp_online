@@ -77,13 +77,12 @@
 							<!-- tab -->
 							<div id="tab1" class="tab-pane active">
 								<div class="products-slick" data-nav="#slick-nav-1">
-									{% for item in products %}
-										{% if item.product.is_home_featured %}
+									{% for product in featured_products %}
 										<div class="product">
-											<a href="{% url 'catalog:product_detail' pk=item.product.id %}" class="product-link">
+											<a href="{% url 'catalog:product_detail' pk=product.id %}" class="product-link">
 												<div class="product-img">
-													{% if item.image %}
-														<img src="{{item.image.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ item.product.name }}">
+													{% if product.image %}
+														<img src="{{product.image.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ product.name }}">
 													{% else %}
 														<img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail fixed-image" alt="Default Image">
 													{% endif %}
@@ -92,8 +91,8 @@
 													</div>
 												</div>
 												<div class="product-body">
-													<p class="product-category">{{ item.product.category }}</p>
-													<h3 class="product-name"><a href="{% url 'catalog:product_detail' pk=item.product.id %}">{{ item.product.name }}</a></h3>
+													<p class="product-category">{{ product.category }}</p>
+													<h3 class="product-name"><a href="{% url 'catalog:product_detail' pk=product.id %}">{{ product.name }}</a></h3>
 													{% comment %} <h4 class="product-price">$980.00 <del
 															class="product-old-price">$990.00</del></h4> {% endcomment %}
 													<div class="product-rating">
@@ -113,7 +112,7 @@
 													</div>
 												</div>
 												<div class="add-to-cart">
-													<a href="{% url 'catalog:product_detail' pk=item.product.id %}">
+													<a href="{% url 'catalog:product_detail' pk=product.id %}">
 														<button class="add-to-cart-btn">
 															<i class="fa fa-shopping-cart"></i> View Deatail
 														</button>
@@ -121,7 +120,6 @@
 												</div>
 											</a>
 										</div>
-										{% endif %}
 									{% endfor %}
 								</div>
 								<div id="slick-nav-1" class="products-slick-nav"></div>
@@ -145,38 +143,38 @@
 				<!-- Products tab & slick -->
 				<div class="col-md-12">
 					<div class="row">
-						{% for item in products %}
+						{% for product in products %}
 							<div class="panel panel-default" style="border: none;"  >
 								<div class="panel-body">
 									<div class="row ">
 										<div class="col-xs-3">
 												<div id="product-main-img">
-													{% if item.image %}
+													{% if product.image %}
 														{% comment %} {% for img in item.images %}
 														<!-- <div class="product-preview"> -->
 														<div class="">
 															<img src="{{img.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ img.title }}">
 														</div>
 														{% endfor %} {% endcomment %}
-														<img src="{{item.image.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ img.title }}">
+														<img src="{{product.image.full_url.url}}" class="img-responsive img-thumbnail fixed-image" alt="{{ img.title }}">
 													{% else %}
 														<img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail fixed-image" alt="Default Image">
 													{% endif %}
 												</div>
 											{% comment %} <img src="{% static '/img/no-image.jpg' %}" class="img-responsive img-thumbnail fixed-image"  alt="..."> {% endcomment %}
 										</div>
-										<a href="{% url 'catalog:product_detail' item.product.id %}" class="product-link">
+										<a href="{% url 'catalog:product_detail' product.id %}" class="product-link">
 											<div class="col-xs-9">
-												<h4 class="panel-title">{{ item.product.name }}</h4><br>
+												<h4 class="panel-title">{{ product.name }}</h4><br>
 												<ul class="product-links">
-													{% if item.product.brand.name == "Other" %}
-														<li>Product Brand: {{ item.product.other_brand }}</li>
+													{% if product.brand.name == "Other" %}
+														<li>Product Brand: {{ product.other_brand }}</li>
 													{% else %}
-														<li>Product Brand: {{ item.product.brand }}</li>
+														<li>Product Brand: {{ product.brand }}</li>
 													{% endif %}
 
 												</ul>
-												<p>{{ item.product.short_description|truncatechars:100 }}</p>
+												<p>{{ product.short_description|truncatechars:100 }}</p>
 												<p><small class="text-muted">Last updated 3 mins ago</small></p>
 											</div>
 										</a>

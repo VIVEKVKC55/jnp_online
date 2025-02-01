@@ -3,8 +3,9 @@ from .models import Category, ProductBrand,ProductAttributes, ProductImages, Pro
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug', 'parent', 'created', 'created_by', 'updated', 'updated_by')
+    list_display = ('id', 'name', 'slug', 'parent', 'include_in_menu')
     search_fields = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
     list_filter = ('created', 'updated')
 
 @admin.register(ProductBrand)
@@ -33,7 +34,7 @@ class ProductAttributeValueInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'brand', 'category', 'is_enabled', 'is_approved', 'is_home_featured', 'created', 'updated')
+    list_display = ('name', 'brand','other_brand', 'category', 'is_enabled', 'is_approved', 'is_home_featured', 'created', 'updated')
     search_fields = ('name', 'slug', 'category__name', 'brand__name')
     list_filter = ('is_enabled', 'is_home_featured')
     prepopulated_fields = {'slug': ('name',)}  # Auto-generate slug from product name

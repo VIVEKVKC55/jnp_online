@@ -82,6 +82,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'catalog.context_processors.menu_categories',
             ],
         },
     },
@@ -91,17 +92,6 @@ WSGI_APPLICATION = "jnp_online.wsgi.application"
 
 
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'bjvhtaac6gj05avdxyvi',
-#         'USER': 'utsaon9hsodbfo68',
-#         'PASSWORD': 't9TBUEGnonD1OXM4aQ81',
-#         'HOST': 'bjvhtaac6gj05avdxyvi-mysql.services.clever-cloud.com',
-#         'PORT': '3306',
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
