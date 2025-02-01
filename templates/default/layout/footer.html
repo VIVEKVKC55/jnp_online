@@ -105,7 +105,7 @@
     </footer>
     <div id="categoryModal" class="modal fade modal-bottom" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
+            <div class="modal-content" style='border-radius: 12px;'>
                 <div class="modal-body">
                     <ul class="list-groups">
                     {% for category in menu_categories %}
@@ -158,16 +158,22 @@
 
 /* Button color */
 .btn-light {
-    background-color: rgba(74, 167, 210, 0.15);
+    background-color: rgb(110, 168, 245);
     color: #333; /* Icon color */
     border: 1px solid #ccc; /* Optional border */
 }
-
-/* Use Flexbox to arrange items in a responsive manner */
 .list-groups {
     display: flex;
     flex-wrap: wrap;
-    justify-content: start; /* Align buttons to the left */
+    justify-content: center; /* Center items */
+    gap: 10px; /* Reduce spacing */
+    padding: 0; /* Remove extra padding */
+}
+
+ul.list-groups {
+    padding: 0;
+    margin: 0;
+    list-style: none; /* Remove default list styles */
 }
 
 
