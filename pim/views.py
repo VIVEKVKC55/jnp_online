@@ -5,11 +5,13 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.models import Product, ProductImages, ProductAttributeValue
 from business.models import BusinessDetails
-from .forms import (ProductForm, 
-                    ProductImageUpdateFormSet, 
-                    ProductImageFormSet, 
-                    ProductAttributeValueFormSet, 
-                    ProductAttributeValueUpdateFormSet)
+from .forms import (
+    ProductForm, 
+    ProductImageUpdateFormSet, 
+    ProductImageFormSet, 
+    ProductAttributeValueFormSet, 
+    ProductAttributeValueUpdateFormSet
+    )
 
 class ProductListView(LoginRequiredMixin, ListView):
     """

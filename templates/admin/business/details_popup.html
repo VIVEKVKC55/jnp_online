@@ -1,0 +1,35 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">{{ business.business_name }} Details</h4>
+</div>
+<div class="modal-body">
+    <p><strong>Owner:</strong> {{ business.owner_name }}</p>
+    <p><strong>Business Type:</strong> {{ business.type_of_business }}</p>
+    <p><strong>Dealing With:</strong> {{ business.dealing_with }}</p>
+    <p><strong>Location:</strong> {{ business.business_location }}</p>
+    <p><strong>Address:</strong> {{ business.address }}</p>
+    <p><strong>Phone Number:</strong> {{ business.mobile_number }}</p>
+    <p><strong>Approval Status:</strong> {% if business.is_approved %} Approved {% else %} Not Approved {% endif %}</p>
+
+    {% if business.business_name_board_photo %}
+        <div class="form-group">
+            <label>Business Name Board Photo:</label>
+            <img src="{{ business.business_name_board_photo.url }}" alt="Business Name Board" class="img-responsive" />
+        </div>
+    {% endif %}
+    {% if business.authorized_person_photo %}
+        <div class="form-group">
+            <label>Authorized Person Photo:</label>
+            <img src="{{ business.authorized_person_photo.url }}" alt="Authorized Person" class="img-responsive" />
+        </div>
+    {% endif %}
+</div>
+<div class="modal-footer">
+    <form method="post" action="{% url 'pim:toggle_business_approval' business.id %}" id="approval-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">
+            {% if business.is_approved %} Unapprove {% else %} Approve {% endif %}
+        </button>
+    </form>                           
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>

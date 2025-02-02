@@ -1,0 +1,175 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %}Post List{% endblock %}
+{% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
+
+{% block content %}
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="breadcrumb-tree">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#">Product List</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION -->
+<div class="section">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <!-- Product Table -->
+            <table id="post-list" class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Business Name</th>
+                        <th>Owner</th>
+                        <th>Location</th>
+                        <th>Approved</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for business in businesses %}
+                        <tr>
+                            <td>{{ business.id }}</td>
+                            <td>{{ business.business_name }}</td>
+                            <td>{{ business.owner_name }}</td>
+                            <td>{{ business.business_location }}</td>
+                            <td>{{ business.is_approved|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if user.is_superuser or user.is_staff %}
+                                    
+                                    <!-- Button Triggering Modal -->
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#businessModal-{{ business.id }}">
+                                        View Details
+                                    </button>
+
+                                    <!-- Modal for Each Business -->
+                                    <div id="businessModal-{{ business.id }}" class="modal fade" role="dialog">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Business Details: {{ business.business_name }}</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Owner:</strong> {{ business.owner_name }}</p>
+                                                    <p><strong>Business Type:</strong> {{ business.type_of_business }}</p>
+                                                    <p><strong>Dealing With:</strong> {{ business.dealing_with }}</p>
+                                                    <p><strong>Location:</strong> {{ business.business_location }}</p>
+                                                    <p><strong>Address:</strong> {{ business.address }}</p>
+                                                    <p><strong>Phone Number:</strong> {{ business.mobile_number }}</p>
+                                                    <p><strong>Approval Status:</strong> {% if business.is_approved %} Approved {% else %} Not Approved {% endif %}</p>
+                                                    
+                                                    {% if business.business_name_board_photo %}
+                                                        <div class="form-group">
+                                                            <label>Business Name Board Photo:</label>
+                                                            <img src="{{ business.business_name_board_photo.url }}" alt="Business Name Board" class="img-responsive" />
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if business.authorized_person_photo %}
+                                                        <div class="form-group">
+                                                            <label>Authorized Person Photo:</label>
+                                                            <img src="{{ business.authorized_person_photo.url }}" alt="Authorized Person" class="img-responsive" />
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form method="post" action="{% url 'pim:toggle_business_approval' business.id %}" id="approval-form">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-primary">
+                                                            {% if business.is_approved %} Unapprove {% else %} Approve {% endif %}
+                                                        </button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6">No businesses found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extrastyle %}
+<link type="text/css" rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}" />
+{% endblock extrastyle %}
+
+{% block extrajs %}
+<script src="{% static 'js/dataTables.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof jQuery !== "undefined" && $.fn.dataTable) {
+            // Initialize DataTable only if jQuery and DataTables are available
+            new DataTable('#post-list', {
+                paging: true,
+                searching: true,
+                ordering: true
+            });
+        } else {
+            console.error("jQuery or DataTables is not loaded correctly.");
+        }
+    });
+</script>
+<script>
+    // Ensure jQuery is loaded (if not already included)
+    $(document).ready(function() {
+        // Listen for form submission
+        $('form#approval-form').on('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+            
+            var form = $(this);
+            var modal = form.closest('.modal'); // Get the modal element
+            var submitButton = form.find('button[type="submit"]'); // Get the submit button
+
+            // Show loading spinner (optional)
+            submitButton.prop('disabled', true).text('Processing...');
+            
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function(response) {
+                    // Check if the approval was successful
+                    if (response.success) {
+                        // Change the button text based on approval status
+                        submitButton.text(response.is_approved ? 'Unapprove' : 'Approve');
+                        
+                        // Optionally, you can update other parts of the UI based on the response
+                        modal.modal('hide'); // Hide the modal after submission
+                    } else {
+                        alert('An error occurred while processing the request.');
+                        submitButton.prop('disabled', false).text('Try Again');
+                    }
+                },
+                error: function() {
+                    alert('Error occurred while submitting the request.');
+                    submitButton.prop('disabled', false).text('Try Again');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock extrajs %}

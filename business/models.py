@@ -26,7 +26,13 @@ class BusinessDetails(models.Model):
     authorized_person_photo = CloudinaryField('authorized_person_photos')
     mobile_number = models.CharField(max_length=15)
     is_approved = models.BooleanField(default=False)
-    # approved_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="approved_businesses")
+
+    def toggle_approval(self, approver):
+        """Toggle approval status and record the approver."""
+        self.is_approved = not self.is_approved
+        self.approved_by = approver if self.is_approved else None
+        self.save()
 
     def __str__(self):
         return self.business_name
