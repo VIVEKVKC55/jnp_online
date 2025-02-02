@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import BusinessDetails
 
-class RegistrationForm(forms.ModelForm):
+class BusinessDetailsForm(forms.ModelForm):
     username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter username'}),
         label="Username"
@@ -66,3 +66,17 @@ class RegistrationForm(forms.ModelForm):
 
         return business_registration
 
+
+class BusinessDetailsUpdateForm(forms.ModelForm):
+    class Meta:
+        model = BusinessDetails
+        fields = [
+            'business_name', 'address', 'owner_name', 'business_location',
+            'type_of_business', 'dealing_with', 'mobile_number',
+            'business_name_board_photo', 'authorized_person_photo'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = field.widget.attrs.get('class', '') + ' form-control'

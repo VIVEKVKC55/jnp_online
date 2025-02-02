@@ -9,11 +9,12 @@
 				<div id="responsive-nav">
 					<!-- NAV -->
 					<ul class="main-nav header-links">
-						<li class="active"><a href="/"><i class="fa fa-home"></i>Home</a></li>
 						{% if user.is_authenticated %}
+							<li class="active"><a href="#"> My Account</a></li>
+							<li><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
 							<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i>ADD Product</a></li>
-							<li><a href="#"><i class="fa fa-user"></i> My Account</a></li>
-							<li><a href="#"><i class="fa fa-cog"></i> Setting</a></li>
+							<li><a href="{% url 'busniuss:update' %}"><i class="fa fa-pencil-square"></i>Update Busniuss</a></li>
+							{% comment %} <li><a href="#"><i class="fa fa-cog"></i> Setting</a></li> {% endcomment %}
 							<li><a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i>Logout</a></li>
 						{% else %}
 							<li><a href="{% url 'account:login' %}"><i class="fa fa-sign-in"></i>Login</a></li>

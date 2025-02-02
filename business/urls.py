@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import register_user
+from .views import register_user,BusinessDetailsUpdateView
 
-app_name = 'business'
+app_name = 'busniuss'
 
 urlpatterns = [
-    path('business_register/', register_user, name='business_register'),
+    path('reg/', register_user, name='reg'),
+    path('update/', BusinessDetailsUpdateView.as_view(), name='update'),
 ]

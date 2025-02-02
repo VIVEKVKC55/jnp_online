@@ -1,0 +1,84 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %} Material Handling, Industrial Supplies, Tools, Safety Equipment & More {% endblock %}
+{% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
+
+{% block ld_json %}
+{{home_schema|safe}}
+{% endblock %}
+
+{% block content %}
+
+		<!-- BREADCRUMB -->
+		<div id="breadcrumb" class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="breadcrumb-tree">
+							<li><a href="/">Home</a></li>
+							<li><a href="#">Add New Product</a></li>
+						</ul>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /BREADCRUMB -->
+
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container mt-5">
+				<!-- row -->
+				<div class="row justify-content-center">
+					<div class="">
+						<div class="card shadow-lg p-4">
+							<h2 class="text-center">Add Product</h2>
+							{% if messages %}
+								<div class="alert alert-info">
+									{% for message in messages %}
+										<p>{{ message }}</p>
+									{% endfor %}
+								</div>
+							{% endif %}
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+								<a href="{% url 'pim:edit_images' form.instance.pk %}" class="btn btn-warning btn-sm">
+									Edit Images
+								</a>
+                                <button type="submit" class="btn btn-success w-100" style="display: block; margin: auto; margin-bottom: 12px;">Save Product</button>
+                            </form>
+						</div>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+{% endblock content %}
+{% block extrajs %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const brandDropdown = document.getElementById('id_brand');
+        const customBrandField = document.getElementById('id_other_brand');
+        // Check if "Other" was selected and show the custom brand field
+        brandDropdown.addEventListener('change', function() {
+            if (brandDropdown.value === '3') {
+                customBrandField.style.display = 'block';
+            } else {
+                customBrandField.style.display = 'none';
+            }
+        });
+        // Initial check in case "Other" is already selected
+        if (brandDropdown.value === '3') {
+            customBrandField.style.display = 'block';
+        }
+    });
+</script>
+{% endblock extrajs %}

@@ -161,7 +161,6 @@ class Product(models.Model):
 class ProductImages(models.Model):
     """This is the ProductImages Django Model for the product_images database table."""
 
-    id = models.AutoField(primary_key=True)
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 related_name='product_image',
@@ -205,7 +204,6 @@ class ProductAttributeValue(models.Model):
     """This is the ProductPartAttributeValue Django Model for the 
     pim_product_attribute_value database table."""
 
-    id = models.AutoField(primary_key=True)
     product = models.ForeignKey(Product,
                                     on_delete=models.CASCADE,
                                     related_name='p_attr_val',

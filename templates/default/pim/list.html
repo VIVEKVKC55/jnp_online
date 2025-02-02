@@ -1,0 +1,103 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %}Post List{% endblock %}
+{% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
+
+{% block content %}
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="breadcrumb-tree">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#">Product List</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION -->
+<div class="section">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <!-- Product Table -->
+            <table id="post-list" class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Brand</th>
+                        <th>Active</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if products %}
+                        {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td><a href="{% url 'catalog:product_detail' product.id %}">{{ product.name|capfirst }}</a></td>
+                                <td>{{ product.category.name }}</td>
+                                <td>{{ product.brand.name }}</td>
+                                <td>
+                                    {% if product.is_enabled %}
+                                        <span class="badge bg-success">Yes</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">No</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'pim:edit' product.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                    <form method="POST" action="{% url 'pim:delete' product.pk %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('Are you sure you want to delete this product?');">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">No products found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extrastyle %}
+<link type="text/css" rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}" />
+{% endblock extrastyle %}
+
+{% block extrajs %}
+<script src="{% static 'js/dataTables.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof jQuery !== "undefined" && $.fn.dataTable) {
+            // Initialize DataTable only if jQuery and DataTables are available
+            new DataTable('#post-list', {
+                paging: true,
+                searching: true,
+                ordering: true
+            });
+        } else {
+            console.error("jQuery or DataTables is not loaded correctly.");
+        }
+    });
+</script>
+{% endblock extrajs %}
+

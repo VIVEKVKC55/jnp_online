@@ -1,18 +1,18 @@
-from django.shortcuts import redirect
-from django.views.generic import ListView, CreateView
+from django.shortcuts import redirect, get_object_or_404, render
+from django.views.generic import View, ListView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from catalog.models import Product, ProductImages, ProductAttributeValue, ProductAttributes
+from catalog.models import Product, ProductImages, ProductAttributeValue
 from business.models import BusinessDetails
-from .forms import ProductForm, ProductImageFormSet, ProductAttributeValueFormSet
+from .forms import ProductForm, ProductImageUpdateFormSet, ProductImageFormSet, ProductAttributeValueFormSet
 
 class ProductListView(LoginRequiredMixin, ListView):
     """
     View to list all products for the logged-in user.
     """
     model = Product
-    template_name = 'default/pim/product_list.html'  # Update this to match your template
+    template_name = 'default/pim/list.html'  # Update this to match your template
     context_object_name = 'products'
     paginate_by = 10  # Adjust pagination as needed
 
@@ -27,7 +27,7 @@ class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'default/pim/add.html'
-    success_url = reverse_lazy('pim:product_list')
+    success_url = reverse_lazy('pim:list')
 
     def get(self, request, *args, **kwargs):
         try:
@@ -84,3 +84,129 @@ class ProductCreateView(CreateView):
             'product_image_formset': product_image_formset,
             'product_attribute_value_formset': product_attribute_value_formset,
         })
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'default/pim/edit.html'
+    success_url = reverse_lazy('pim:list')
+
+    def dispatch(self, request, *args, **kwargs):
+        """Restrict access if business details are missing or not approved."""
+        try:
+            business_details = BusinessDetails.objects.get(user=request.user)
+            if not business_details.is_approved:
+                messages.error(request, "Your business details have not been approved.")
+                return redirect('home:home')
+        except BusinessDetails.DoesNotExist:
+            messages.error(request, "You must have business details to access this page.")
+            return redirect('home:home')
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        """Fetch the product object using URL kwargs."""
+        return get_object_or_404(Product, pk=self.kwargs.get('pk'))
+
+    def get(self, request, *args, **kwargs):
+        product = self.get_object()  # Get the product instance
+        form_class = self.get_form_class()  # Get the form class
+        form = form_class(instance=product)  # Create form with instance data
+
+        return self.render_to_response({
+            'form': form,
+        })
+
+    def post(self, request, *args, **kwargs):
+        product = self.get_object()  # Fetch product instance
+        form = self.get_form_class()(request.POST, request.FILES, instance=product)  # Create form with instance data
+
+        if form.is_valid():
+            # Save the product instance
+            product = form.save(commit=False)
+            product.save()
+            messages.success(request, "Product updated successfully!")
+            return redirect(self.success_url)
+        else:
+            # Debugging: Check the errors in formset and form
+            print("Form errors:", form.errors)
+        return self.render_to_response({
+            'form': form,
+        })
+
+
+
+class ProductDeleteView(View):
+    def post(self, request, *args, **kwargs):
+        # Get the product to delete
+        product = get_object_or_404(Product, pk=self.kwargs['pk'])
+
+        # Delete the product
+        product.delete()
+
+        # Show a success message
+        messages.success(request, f"Product '{product.name}' has been deleted successfully.")
+
+        # Redirect to the product list page
+        return redirect(reverse_lazy('pim:list'))
+
+    def get(self, request, *args, **kwargs):
+        # If someone tries to access the delete URL directly via GET, redirect them to the list view
+        return redirect(reverse_lazy('pim:list'))
+
+
+class ProductImageUpdateView(View):
+    def get_object(self, queryset=None):
+        """Fetch the product object using URL kwargs."""
+        return get_object_or_404(Product, pk=self.kwargs.get('product_id'))
+
+    def get(self, request, *args, **kwargs):
+        product = self.get_object()  # Get the product instance
+        
+        product_image_formset = ProductImageUpdateFormSet(instance=product, prefix='images')
+
+        if not product_image_formset.forms:
+            product_image_formset = ProductImageFormSet(instance=product, prefix='images')
+
+        return self.render_to_response(request, {
+            'product': product,
+            'product_image_formset': product_image_formset
+        })
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()  # Fetch product instance
+
+        # Bind formset with POST data and files (No `queryset` filter)
+        product_image_formset = ProductImageFormSet(
+            request.POST, request.FILES, instance=self.object, prefix='images'
+        )
+
+        if product_image_formset.is_valid():
+            # Save all images (existing + new)
+            image_instances = product_image_formset.save(commit=False)
+
+            # Save new images and associate with the product
+            for image in image_instances:
+                image.product = self.object  # Explicitly set the product
+                image.save()  # Save to the database
+
+            # Handle deletions
+            for form in product_image_formset.deleted_objects:
+                form.delete()  # Delete marked objects
+
+            product_image_formset.save_m2m()  # Save many-to-many relationships (if any)
+
+            messages.success(request, "Product images updated successfully!")
+            return redirect('pim:edit', pk=self.object.id)
+        else:
+            messages.error(request, "There was an error with your image formset.")
+        
+        return self.render_to_response(request, {
+            'product': self.object,
+            'product_image_formset': product_image_formset
+        })
+
+    def render_to_response(self, request, context, **kwargs):
+        """Render the response using the correct template and include the 'request' object."""
+        return render(request, 'default/pim/edit_images.html', context)

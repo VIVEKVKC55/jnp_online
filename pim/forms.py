@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import inlineformset_factory
 from catalog.models import Product, ProductAttributes, ProductImages, ProductAttributeValue
 
 class ProductImageForm(forms.ModelForm):
@@ -11,13 +12,21 @@ class ProductImageForm(forms.ModelForm):
             'is_default': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-ProductImageFormSet = forms.modelformset_factory(
-    ProductImages,
+# ✅ Use inlineformset_factory to properly link images to a specific product
+ProductImageFormSet = inlineformset_factory(
+    Product,  # Parent Model
+    ProductImages,  # Child Model
     form=ProductImageForm,
-    extra=1,  # One empty form will always be rendered
-    # can_delete=True  # Allow removing images dynamically
+    extra=1,
+    can_delete=True  # Allow removing images dynamically
 )
-
+ProductImageUpdateFormSet = inlineformset_factory(
+    Product,  # Parent Model
+    ProductImages,  # Child Model
+    form=ProductImageForm,
+    extra=0,
+    can_delete=True  # Allow removing images dynamically
+)
 class ProductAttributeValueForm(forms.ModelForm):
     class Meta:
         model = ProductAttributeValue
@@ -28,11 +37,13 @@ class ProductAttributeValueForm(forms.ModelForm):
             'order_no': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
-ProductAttributeValueFormSet = forms.modelformset_factory(
-    ProductAttributeValue,
+# ✅ Use inlineformset_factory to properly link attributes to a specific product
+ProductAttributeValueFormSet = inlineformset_factory(
+    Product,  # Parent Model
+    ProductAttributeValue,  # Child Model
     form=ProductAttributeValueForm,
-    extra=1,  # Start with one empty form
-    # can_delete=True  # Allow removal of extra forms
+    extra=1,
+    can_delete=True  # Allow removal of extra forms
 )
 
 class ProductForm(forms.ModelForm):
