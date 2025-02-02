@@ -15,4 +15,8 @@ urlpatterns = [
     path('admin/businesses/', admin_staff.BusinessDetailsListView.as_view(), name='business_list'),
     path('businesses/<int:business_id>/popup/', admin_staff.BusinessDetailPopupView.as_view(), name='business_detail_popup'),
     path('toggle_approval/<int:business_id>/', admin_staff.ToggleBusinessApprovalView.as_view(), name='toggle_business_approval'),
+
+    path('products/', admin_staff.ProductListView.as_view(), name='product_list'),
+    path('products/<int:product_id>/details/', admin_staff.ProductDetailPopupView.as_view(), name='product_detail_popup'),
+    path('products/<int:product_id>/toggle-approval/', admin_staff.ToggleProductApprovalView.as_view(), name='toggle_product_approval'),
 ]

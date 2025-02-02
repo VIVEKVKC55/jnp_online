@@ -74,3 +74,74 @@ class ToggleBusinessApprovalView(LoginRequiredMixin, UserPassesTestMixin, View):
             "approved_by": business.approved_by.username if business.approved_by else None
         })
 
+
+
+from catalog.models import Product
+
+class ProductListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """
+    View to list all products.
+    Access is restricted to staff and superusers.
+    """
+    model = Product
+    template_name = 'admin/product/list.html'  # HTML template to display the list
+    context_object_name = 'products'
+
+    def test_func(self):
+        """Restrict access to staff and superusers only."""
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+    def get_queryset(self):
+        """
+        Order products by approval status (approved first) and creation date (newest first).
+        """
+        return Product.objects.all().order_by('-is_approved', '-created')  # Adjust ordering as needed
+
+
+class ProductDetailPopupView(DetailView):
+    model = Product
+    template_name = 'admin/product/details_popup.html'  # Template to display product details in modal
+    context_object_name = 'product'
+
+    def get_object(self):
+        """Override to retrieve product details based on URL parameter"""
+        product_id = self.kwargs['product_id']
+        return get_object_or_404(Product, id=product_id)
+
+
+class ToggleProductApprovalView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """Class-based view to approve/unapprove product details"""
+
+    def test_func(self):
+        """Ensure only staff or superuser can perform this action"""
+        return self.request.user.is_superuser or self.request.user.is_staff
+
+    def post(self, request, product_id):
+        """Approve or unapprove the product"""
+        # Check if the user is allowed to perform the action
+        if not self.test_func():
+            return JsonResponse({"error": "You don't have permission to perform this action."}, status=403)
+        
+        product = get_object_or_404(Product, id=product_id)
+        
+        # Toggle the approval status of the product
+        product.is_approved = not product.is_approved
+        product.approved_by = request.user if product.is_approved else None
+        product.save()
+
+        # Send email to the product creator after approval/unapproval
+        subject = 'Your Product Approval Status has Changed'
+        email_message = f'Hello {product.created_by.username},\n\n' \
+                        f'Your product "{product.name}" has been {'approved' if product.is_approved else 'unapproved'} by {request.user.username}.\n\n' \
+                        'Thank you for your cooperation.'
+        from_email = settings.DEFAULT_FROM_EMAIL  # Ensure this is set in settings.py
+        recipient_list = [product.created_by.email]
+
+        # Send the email
+        send_mail(subject, email_message, from_email, recipient_list)
+
+        return JsonResponse({
+            "success": True,
+            "is_approved": product.is_approved,
+            "approved_by": product.approved_by.username if product.approved_by else None
+        })
