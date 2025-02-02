@@ -1,0 +1,161 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+{% load encryption %}
+{% load custom_filter %}
+{% block title %} My Account {% endblock %}
+<!-- site__body -->
+{% block content %}
+<!-- site__body -->
+<div class="site__body">
+    <div class="page-header">
+        <div class="page-header__container container">
+            <div class="page-header__breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/">Home</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">My Account</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-header__title">
+                <h1>My Account</h1>
+            </div>
+        </div>
+    </div>
+    <div class="block">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-3 d-flex">
+                    {% include "default/account/left-menu.html" with class='dashboard' %}
+                </div>
+                <div class="col-12 col-lg-9 mt-4 mt-lg-0">
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div {% if message.tags %} class="alert alert-{{ message.tags }} {{ message.tags }} alert-dismissible fade show" {% endif %} role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <strong>{{ message.tags|title }}!</strong> {{ message }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="dashboard">
+                        {% if shipping %}
+                        <div class="dashboard__address card address-card address-card--featured">
+                            <div class="address-card__badge type-badge">{{shipping.address_type}}</div>
+                                {% if shipping.is_default %}
+                                <div class="address-card__badge">Default</div>
+                                {% endif %}
+                            <div class="address-card__body">
+                                <div class="address-card__name">{{shipping.contact_name}}</div>
+                                <div class="address-card__row">
+                                    {{shipping.address_name|title}}, {{shipping.address1}} {{shipping.address2|default:''}}<br>
+                                    {{shipping.zip}}, {{shipping.city}}<br>
+                                    {{shipping.state}}, {{shipping.country}}
+                                </div>
+                                <div class="address-card__row">
+                                    <div class="address-card__row-title">Address Name</div>
+                                    <div class="address-card__row-content">{{shipping.address_name|title}}</div>
+                                </div>
+                                <div class="address-card__row">
+                                    <div class="address-card__row-title">Phone Number</div>
+                                    <div class="address-card__row-content">{{shipping.phone}}</div>
+                                </div>
+                                <div class="address-card__footer">
+                                    <a href="{{shipping.edit_url}}">Edit Address</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'account:add-address' %}?address_type=shipping" class="addresses-list__item addresses-list__item--new add-shipping">
+                            <div class="address-card__badge new-badge">Shipping</div>
+                            <div class="addresses-list__plus"></div>
+                            <div class="btn btn-secondary btn-sm">Add New</div>
+                        </a>
+                        {% endif %}
+                        {% if billing %}
+                        <div class="dashboard__address card address-card address-card--featured">
+                            <div class="address-card__badge type-badge">{{billing.address_type}}</div>
+                            {% if billing.is_default %}
+                                <div class="address-card__badge">Default</div>
+                            {% endif %}
+                            <div class="address-card__body">
+                                <div class="address-card__name">{{billing.contact_name}}</div>
+                                <div class="address-card__row">
+                                    {{billing.address_name|title}}, {{billing.address1}} {{billing.address2|default:''}}<br>
+                                    {{billing.zip}}, {{billing.city}}<br>
+                                    {{billing.state}}, {{billing.country}}
+                                </div>
+                                <div class="address-card__row">
+                                    <div class="address-card__row-title">Phone Number</div>
+                                    <div class="address-card__row-content">{{billing.phone|default:'N/A'}}</div>
+                                </div>
+                                <div class="address-card__row">
+                                    <div class="address-card__row-title">Email Address</div>
+                                    <div class="address-card__row-content">{{billing.email|default:'N/A'}}</div>
+                                </div>
+                                <div class="address-card__footer">
+                                    <!--<a href="{% url 'account:edit-address' %}?addressId={{shipping.id|encrypt}}">Edit Address</a>-->
+                                    <a href="{{billing.edit_url}}">Edit Address</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'account:add-address' %}?address_type=billing" style="position:relative;margin-left:5px;" class="addresses-list__item addresses-list__item--new add-billing">
+                            <div class="address-card__badge new-badge">Billing</div>
+                            <div class="addresses-list__plus"></div>
+                            <div class="btn btn-secondary btn-sm">Add New</div>
+                        </a>
+                        {% endif %}
+                        <div class="dashboard__orders card">
+                            <div class="card-header">
+                                <h5>Recent Orders</h5>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-table">
+                                <div class="table-responsive-sm">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>ID#</th>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for order in orders %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{% url 'account:order-details' %}?orderId={{order.id|encrypt}}">
+                                                        {% if order.order_type == 'order' %}
+                                                            {{order.id|order_number}}
+                                                        {% else %}
+                                                            #{{order.id}}
+                                                        {% endif %}
+                                                    </a>
+                                                </td>
+                                                <td>{{order.created|date:'d F, Y'}}</td>
+                                                <td>
+                                                    {{order_status_dict|get_value:order.status_id}}                                                    
+                                                </td>
+                                                <td>${{order.grand_total|currency}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- site__body / end -->
+{% endblock content %}
+<!-- site__body / end -->

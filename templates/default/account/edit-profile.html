@@ -1,0 +1,103 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %} Edit Profile {% endblock %}
+<!-- site__body -->
+{% block content %}
+<!-- site__body -->
+<div class="site__body">
+    <div class="page-header">
+        <div class="page-header__container container">
+            <div class="page-header__breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/">Home</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'account:dashboard' %}">My Account</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-header__title">
+                <h1>My Account</h1>
+            </div>
+        </div>
+    </div>
+    <div class="block">
+        <form method="post" id="common-form" action="">
+            {% csrf_token %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-3 d-flex">
+                        {% include "default/account/left-menu.html" with class='edit-profile' %}
+                    </div>
+                    <div class="col-12 col-lg-9 mt-4 mt-lg-0">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Edit Profile</h5>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-body">
+                                <div class="row no-gutters">
+                                    <div class="col-12 col-lg-7 col-xl-6">
+                                        {% for f in form %}
+                                        <div class="form-group">
+                                            {% if f.name in 'is_tax_exempt, is_reseller' %}
+                                            <div class="form-check">
+                                                <span class="form-check-input input-check">
+                                                    <span class="input-check__body">
+                                                        {{f}}
+                                                        <span class="input-check__box"></span>
+                                                        <svg class="input-check__icon" width="9px" height="7px">
+                                                            <use xlink:href="{{base_url}}/static/default/images/sprite.svg#check-9x7"></use>
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                                <label class="form-check-label" for="id-{{f.name}}">{{f.label_tag}}</label>
+                                            </div>
+                                            {% else %}
+                                            <label>{{f.label_tag}}</label>
+                                            {{f}}
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                        <div class="form-group mt-5 mb-0">
+                                            <button class="btn btn-primary" type="submit">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- site__body / end -->
+{% endblock content %}
+<!-- site__body / end -->
+{% block extrastyle %}
+<link href="{% static 'vendor/parsley/parsley.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extrastyle %}
+{% block extrajs %}
+<script src="{% static 'vendor/jquery-inputmask/jquery.inputmask.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/parsley/parsley.min.js' %}"></script>
+<script src="{% static 'default/js/custom-parsley.js' %}?v=1"></script>
+<script>
+    $(document).ready(function() {
+        $('#id_phone, #id_fax').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    })
+</script>
+{% endblock extrajs %}

@@ -5,7 +5,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.models import Product, ProductImages, ProductAttributeValue
 from business.models import BusinessDetails
-from .forms import ProductForm, ProductImageUpdateFormSet, ProductImageFormSet, ProductAttributeValueFormSet
+from .forms import (ProductForm, 
+                    ProductImageUpdateFormSet, 
+                    ProductImageFormSet, 
+                    ProductAttributeValueFormSet, 
+                    ProductAttributeValueUpdateFormSet)
 
 class ProductListView(LoginRequiredMixin, ListView):
     """
@@ -159,7 +163,7 @@ class ProductDeleteView(View):
 class ProductImageUpdateView(View):
     def get_object(self, queryset=None):
         """Fetch the product object using URL kwargs."""
-        return get_object_or_404(Product, pk=self.kwargs.get('product_id'))
+        return get_object_or_404(Product, pk=self.kwargs.get('pk'))
 
     def get(self, request, *args, **kwargs):
         product = self.get_object()  # Get the product instance
@@ -210,3 +214,59 @@ class ProductImageUpdateView(View):
     def render_to_response(self, request, context, **kwargs):
         """Render the response using the correct template and include the 'request' object."""
         return render(request, 'default/pim/edit_images.html', context)
+
+
+class ProductAttributeUpdateView(View):
+    def get_object(self, queryset=None):
+        """Fetch the product object using URL kwargs."""
+        return get_object_or_404(Product, pk=self.kwargs.get('pk'))
+
+    def get(self, request, *args, **kwargs):
+        product = self.get_object()  # Get the product instance
+        
+        product_attribute_formset = ProductAttributeValueUpdateFormSet(instance=product, prefix='attributes')
+
+        if not product_attribute_formset.forms:
+            product_attribute_formset = ProductAttributeValueFormSet(instance=product, prefix='attributes')
+
+        return self.render_to_response(request, {
+            'product': product,
+            'product_attribute_formset': product_attribute_formset
+        })
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()  # Fetch product instance
+
+        # Bind formset with POST data and files (No `queryset` filter)
+        product_attribute_formset = ProductAttributeValueFormSet(
+            request.POST, request.FILES, instance=self.object, prefix='attributes'
+        )
+
+        if product_attribute_formset.is_valid():
+            # Save all attributes (existing + new)
+            attribute_instances = product_attribute_formset.save(commit=False)
+
+            # Save new attributes and associate with the product
+            for attribute in attribute_instances:
+                attribute.product = self.object  # Explicitly set the product
+                attribute.save()  # Save to the database
+
+            # Handle deletions
+            for form in product_attribute_formset.deleted_objects:
+                form.delete()  # Delete marked objects
+
+            product_attribute_formset.save_m2m()  # Save many-to-many relationships (if any)
+
+            messages.success(request, "Product attributes updated successfully!")
+            return redirect('pim:edit', pk=self.object.id)
+        else:
+            messages.error(request, "There was an error with your attribute formset.")
+        
+        return self.render_to_response(request, {
+            'product': self.object,
+            'product_attribute_formset': product_attribute_formset
+        })
+
+    def render_to_response(self, request, context, **kwargs):
+        """Render the response using the correct template and include the 'request' object."""
+        return render(request, 'default/pim/edit_attributes.html', context)

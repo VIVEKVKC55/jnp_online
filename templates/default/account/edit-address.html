@@ -1,0 +1,96 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %} Edit Address {% endblock %}
+<!-- site__body -->
+{% block content %}
+<!-- site__body -->
+<div class="site__body">
+    <div class="page-header">
+        <div class="page-header__container container">
+            <div class="page-header__breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="index.html">Home</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'account:dashboard' %}">My Account</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'account:addresses' %}">Shipping & Billing Address</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">Address</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-header__title">
+                <h1>My Account</h1>
+            </div>
+        </div>
+    </div>
+    <div class="block">
+        <form action="" method="post" id="common-form" >
+            {% csrf_token %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-3 d-flex">
+                        {% include "default/account/left-menu.html" with class='edit-address' %}
+                    </div>
+                    <div class="col-12 col-lg-9 mt-4 mt-lg-0">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Edit {{object.address_type|capfirst}} Address</h5>
+                            </div>
+                            <div class="card-divider"></div>
+                            <div class="card-body">
+                                <div class="row no-gutters">
+                                    <div class="col-12 col-lg-10 col-xl-8">
+                                        {% for f in form %}
+                                        {% if f.html_name != 'address_type' %}
+                                        <div class="form-group">
+                                            <label for="id_{{f.name}}">{{f.label_tag}}</label>
+                                            {{f}}
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                        <div class="form-group mt-3 mb-0">
+                                            <button class="btn btn-primary" type="submit">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- site__body / end -->
+{% endblock content %}
+<!-- site__body / end -->
+{% block extrastyle %}
+<link href="{% static 'vendor/parsley/parsley.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extrastyle %}
+{% block extrajs %}
+<script src="{% static 'vendor/jquery-inputmask/jquery.inputmask.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/parsley/parsley.min.js' %}"></script>
+<script src="{% static 'js/custom-parsley.js' %}?v=1"></script>
+<script>
+    $(document).ready(function() {
+        $('#id_phone').inputmask("mask", {
+            "mask": "(999) 999-9999"
+        });
+    })
+</script>
+{% endblock extrajs %}

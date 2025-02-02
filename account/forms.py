@@ -26,6 +26,22 @@ class CustomerRegistrationForm(forms.ModelForm):
 
         return cleaned_data
     
-class LoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+class ResetPasswordForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ResetPasswordForm, self).__init__(*args, **kwargs)
+
+        attrs_dict = {
+            'class': 'form-control',
+            'placeholder': 'Email Address',
+        }
+        self.fields['email'].widget.attrs.update(attrs_dict)
+
+    email = forms.EmailField(required=True)
+
+
+class SetPasswordForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(SetPasswordForm, self).__init__(*args, **kwargs)
+
+    password = forms.CharField(widget=forms.PasswordInput)
+    repeat_password = forms.CharField(widget=forms.PasswordInput)

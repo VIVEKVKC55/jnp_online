@@ -1,0 +1,79 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %} Change Email {% endblock %}
+
+{% block content %}
+<!-- site__body -->
+<div class="site__body">
+    <div class="page-header">
+        <div class="page-header__container container">
+            <div class="page-header__breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="index.html">Home</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'account:dashboard' %}">My Account</a>
+                            <svg class="breadcrumb-arrow" width="6px" height="9px">
+                                <use xlink:href="{{base_url}}/static/default/images/sprite.svg#arrow-rounded-right-6x9"></use>
+                            </svg>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">Change Email</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="page-header__title">
+                <h1>My Account</h1>
+            </div>
+        </div>
+    </div>
+    <div class="block">
+        <div class="container">
+            {% include "default/shared/message.html" with messages=messages %}
+            <div class="row ">
+                <div class="col-12 col-lg-3 d-flex">
+                    {% include "default/account/left-menu.html" with class='email' %}
+                </div>
+                <div class="col-xl-5 col-lg-6 col-md-8 justify-content-center">
+                    <div class="card flex-grow-1 mb-0">
+                        <div class="card-body">
+                            <div class="card-title text-center">
+                                <h1>Change your email address</h1>
+                            </div>
+                            <p class="mb-4 pt-2">
+                                Current email address:<br/>
+                                {{customer.email}}<br/><br/>
+                                Enter the new email address you would like to associate with your account below. We will send a One Time Password (OTP) to that address.
+                            </p>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="email"><b>New email address</b></label>
+                                    <input id="email" name="new_email" type="email" class="form-control">
+                                </div>
+                                <div class="pt-3">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block">Continue</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- site__body / end -->
+{% endblock content %}
+<!-- site__body / end -->
+{% block extrastyle %}
+<link href="{% static 'vendor/parsley/parsley.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extrastyle %}
+{% block extrajs %}
+<script src="{% static 'vendor/parsley/parsley.min.js' %}"></script>
+<script src="{% static 'js/custom-parsley.js' %}"></script>
+{% endblock extrajs %}

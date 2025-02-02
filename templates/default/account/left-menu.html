@@ -1,0 +1,30 @@
+{% load static %}
+<div class="account-nav flex-grow-1">
+    <h4 class="account-nav__title">Navigation</h4>
+    <ul>
+        <li class="account-nav__item {% if class == 'dashboard' %}account-nav__item--active{% endif %}">
+            <a href="{% url 'account:dashboard' %}">Dashboard</a>
+        </li>
+        <li class="account-nav__item {% if class == 'edit-profile' %}account-nav__item--active{% endif %} ">
+            <a href="{% url 'account:edit-profile' %}">Edit Profile</a>
+        </li>
+        <li class="account-nav__item {% if class in 'order-history, order-details' %}account-nav__item--active{% endif %} ">
+            <a href="{% url 'account:order-history' %}">Order History</a>
+        </li>
+        <li class="account-nav__item {% if class in 'quote-history, quote-details' %}account-nav__item--active{% endif %} ">
+            <a href="{% url 'account:quote-history' %}">Quote History</a>
+        </li>
+        <li class="account-nav__item {% if class in 'address, edit-address' %}account-nav__item--active{% endif %}">
+            <a href="{% url 'account:addresses' %}">Shipping & Billing Address</a>
+        </li>
+        <li class="account-nav__item {% if class == 'email' %}account-nav__item--active{% endif %} ">
+            <a href="{% url 'account:change-email' %}">Update Email</a>
+        </li>
+        <li class="account-nav__item {% if class == 'password' %}account-nav__item--active{% endif %} ">
+            <a href="{% url 'account:change-password' %}">Password</a>
+        </li>
+        <li class="account-nav__item">
+            <a href="{% url 'account:logout' %}">Logout</a>
+        </li>
+    </ul>
+</div>

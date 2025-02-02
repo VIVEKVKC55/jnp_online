@@ -113,7 +113,7 @@
                             <!-- Create square button with icon -->
                             <a href="{% url 'catalog:cat_products' category.slug %}" 
                             class="btn btn-light btn-block square-btn">
-                            <i class="{{ category.fa_icon_class }} icon-lg"></i> 
+                            <i class="{{ category.fa_icon_class }} fa-3x"></i> 
                             </a>
                         </li>
                     {% endfor %}
@@ -149,11 +149,6 @@
     padding: 0;
     border-radius: 12px; /* Rounded corners */
     text-align: center;
-}
-
-/* Icon size */
-.icon-lg {
-    font-size: 24px; /* Adjust the icon size */
 }
 
 /* Button color */

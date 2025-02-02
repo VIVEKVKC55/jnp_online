@@ -1,11 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse_lazy
-from .forms import CustomerRegistrationForm
+from .forms import CustomerRegistrationForm, ResetPasswordForm
+from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-
+from django.contrib.auth.models import User
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .mail import SendResetPasswordMail
 
 def register(request):
     """
@@ -48,7 +52,6 @@ def register(request):
         form = CustomerRegistrationForm()
 
     return render(request, 'default/account/reg.html', {'form': form})
-
 
 def customer_login(request):
     """

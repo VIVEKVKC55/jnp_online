@@ -45,7 +45,13 @@ ProductAttributeValueFormSet = inlineformset_factory(
     extra=1,
     can_delete=True  # Allow removal of extra forms
 )
-
+ProductAttributeValueUpdateFormSet = inlineformset_factory(
+    Product,  # Parent Model
+    ProductAttributeValue,  # Child Model
+    form=ProductAttributeValueForm,
+    extra=0,
+    can_delete=True  # Allow removal of extra forms
+)
 class ProductForm(forms.ModelForm):
     """
     Form for creating and updating a Product with attributes and attribute values.

@@ -1,0 +1,197 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %} Material Handling, Industrial Supplies, Tools, Safety Equipment & More {% endblock %}
+{% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
+
+{% block ld_json %}
+{{home_schema|safe}}
+{% endblock %}
+
+{% block content %}
+
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="breadcrumb-tree">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#">Add New Product</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+<!-- /BREADCRUMB -->
+
+<!-- SECTION -->
+<div class="section">
+    <!-- container -->
+    <div class="container mt-5">
+        <!-- row -->
+        <div class="row justify-content-center">
+            <div class="">
+                <div class="card shadow-lg p-4">
+                    <h3>Update attributes for Product: {{ product.name }}</h3>
+                    {% if messages %}
+                        <div class="alert alert-info">
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Attribute</th>
+                                    <th>Value</th>
+                                    <th>Order No.</th>
+                                    <th>Delete attribute</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attribute-formset">
+                                {{ product_attribute_formset.management_form }}  
+                    
+                                {% for form in product_attribute_formset %}
+                                    <tr class="form-row-img">
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}  
+                                        {% endfor %}
+                    
+                                        <td>{{ form.attribute }}</td>
+												<td>{{ form.attribute_value }}</td>
+												<td>{{ form.order_no }}</td>
+                                        <td>
+                                            {{ form.DELETE }} 
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger remove-attribute-form">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        <button type="button" id="add-attribute-form" class="btn btn-primary">Add attribute</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</div>
+		<!-- /SECTION -->
+{% endblock content %}
+{% block extrajs %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const formsetDiv = document.getElementById("attribute-formset");
+        const addButton = document.getElementById("add-attribute-form");
+        const totalForms = document.querySelector("#id_attributes-TOTAL_FORMS");
+        const maxForms = 20;  // Set max attribute limit to 20
+    
+        // Function to add a new attribute form row
+        addButton.addEventListener("click", function () {
+            let currentFormCount = parseInt(totalForms.value);
+    
+            if (currentFormCount >= maxForms) {
+                alert("You can only add up to 20 attributes.");
+                return;
+            }
+    
+            // Get the first form row template (empty form)
+            let emptyForm = formsetDiv.querySelector(".form-row-img");
+    
+            if (!emptyForm) {
+                alert("No existing form found!");
+                return;
+            }
+    
+            // Clone the empty form
+            let newForm = emptyForm.cloneNode(true);
+    
+            // Update form field names (Django formset indexing)
+            let regex = new RegExp(`-\\d+-`, "g");
+            let replacement = `-${currentFormCount}-`;
+            newForm.innerHTML = newForm.innerHTML.replace(regex, replacement);
+    
+            // Set the "order_no" field based on the form number (index starts from 1)
+            let newOrderNoInput = newForm.querySelector("input[name*='-order_no']");
+            if (newOrderNoInput) {
+                newOrderNoInput.value = currentFormCount + 1;  // Auto-fill order number based on the form index
+            }
+    
+            // Reset values for all inputs (except hidden fields)
+            newForm.querySelectorAll("input, select, textarea").forEach(input => {
+                if (input.type !== "hidden" && input.name.indexOf('order_no') === -1) {
+                    input.value = ""; // Clear the value of the input except order_no
+                }
+            });
+    
+
+            // Append the new form row to the formset
+            formsetDiv.appendChild(newForm);
+    
+            // Update the form count
+            totalForms.value = currentFormCount + 1;
+    
+            // Ensure that the remove buttons are correctly updated
+            updateRemoveButtons();
+        });
+    
+        // Function to remove an attribute form row
+        formsetDiv.addEventListener("click", function (event) {
+            if (event.target.closest(".remove-attribute-form")) {
+                let row = event.target.closest(".form-row-img");
+                row.remove();
+                updateFormIndexes();
+            }
+        });
+    
+        // Update form indexes after removing a row
+        function updateFormIndexes() {
+            let rows = document.querySelectorAll(".form-row-img");
+            totalForms.value = rows.length;
+    
+            // Re-index form fields (for Django formsets)
+            rows.forEach((row, index) => {
+                row.innerHTML = row.innerHTML.replace(/-\d+-/g, `-${index}-`);
+    
+                // Update the order_no for each row to match its position in the formset
+                let orderNoInput = row.querySelector("input[name*='-order_no']");
+                if (orderNoInput) {
+                    orderNoInput.value = index + 1;  // Auto-update order number based on index
+                }
+            });
+    
+            // Call the remove button update after re-indexing
+            updateRemoveButtons();
+        }
+    
+        // Ensure that remove buttons are updated and are only enabled when there are multiple rows
+        function updateRemoveButtons() {
+            let removeButtons = document.querySelectorAll(".remove-attribute-form");
+            removeButtons.forEach((button, index) => {
+                // Disable the remove button if only one form remains
+                button.disabled = document.querySelectorAll(".form-row-img").length <= 1;
+            });
+        }
+    
+        updateRemoveButtons();
+    });
+    
+</script>    
+{% endblock extrajs %}
