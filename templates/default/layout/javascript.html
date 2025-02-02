@@ -1,5 +1,12 @@
 {% load static %}
-
+<script>
+    $(document).ready(function(){
+      $('.dropdown-toggle').on('click', function(e){
+        e.preventDefault(); // Prevent default link behavior if needed
+        $(this).parent('.dropdown').toggleClass('open');
+      });
+    });
+  </script>
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/slick.min.js' %}"></script>

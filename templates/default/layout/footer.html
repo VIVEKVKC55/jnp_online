@@ -104,12 +104,13 @@
         </nav>
     </footer>
     <div id="categoryModal" class="modal fade modal-bottom" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style='border-radius: 12px;'>
-                <div class="modal-body">
+        <div class="modal-dialog customBgNone" role="document">
+            <div class="modal-content customBgNone" style='box-shadow: none;
+    border: none;'>
+                <div class="modal-body ">
                     <ul class="list-groups">
                     {% for category in menu_categories %}
-                        <li class="list-group-items d-inline-block p-2">
+                        <li class="list-group-items d-inline-block p-2 customBgNone">
                             <!-- Create square button with icon -->
                             <a href="{% url 'catalog:cat_products' category.slug %}" 
                             class="btn btn-light btn-block square-btn">
@@ -136,7 +137,7 @@
     display: block;
     padding: 10px 10px;
     margin-bottom: -1px;
-    background-color: #fff;
+   
 }
 
 /* Ensure each button is square with rounded corners */
@@ -259,9 +260,9 @@ ul.list-groups {
 }
 
 /* Responsive Fix */
-@media (max-width: 990px) {
+@media (max-width: 991px) {
     .desktop-footer {
-        display: none;
+        display: none!important;
     }
 
     .mobile-footer {
@@ -273,9 +274,9 @@ ul.list-groups {
     }
 }
 
-@media (min-width: 991px) {
+@media (min-width: 992px) {
     .mobile-footer {
-        display: none;
+        display: none!important;
     }
 }
 
