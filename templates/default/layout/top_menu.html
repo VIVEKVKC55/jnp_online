@@ -3,57 +3,52 @@
 
 	<header>
 		
-			 <!-- NAVIGATION -->
-  <nav id="top-header">
-    <!-- container -->
-    <div class="container">
-      <!-- responsive-nav -->
-      <div id="responsive-nav">
-        <!-- NAV -->
-        <ul class="main-nav header-links pull-right">
-          {% if user.is_authenticated %}
-		  		{% if user.is_superuser %}
-							<li class><a href="/admin/"><i class="fa fa-user"></i>Admin</a></li>
-						{% endif %}
-            <!-- <li class="active"><a href="#">My Account</a></li> -->
-            
-            <!-- Dropdown Menu -->
-			
-				<li class="dropdown desktop-footer">
-				<a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-expanded="false">
-					</i> My Account <b class="caret"></b>
-				</a>
-				<ul class="dropdown-menu">
-					<li><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
-					<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Forget Password</a></li>
-					<li><a href="{% url 'busniuss:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
-					<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
-					<li><a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
-				</ul>
-				</li>
-			
-            
-			
-				  <li class="li_for_desk"><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
-				  <li class="li_for_desk"><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Forget Password</a></li>
-				  <li class="li_for_desk"><a href="{% url 'busniuss:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
-				  <li class="li_for_desk"><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
-				  <li class="li_for_desk"><a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
-			
+		<!-- NAVIGATION -->
+		<nav id="top-header">
+			<!-- container -->
+			<div class="container">
+				<!-- responsive-nav -->
+				<div id="responsive-nav">
+					<!-- NAV -->
+					<ul class="main-nav header-links pull-right">
+					{% if user.is_authenticated %}
+							{% if user.is_superuser %}
+										<li class><a href="/admin/"><i class="fa fa-user"></i>Admin</a></li>
+									{% endif %}
+						<!-- <li class="active"><a href="#">My Account</a></li> -->
+						
+						<!-- Dropdown Menu -->
+						
+							<li class="dropdown desktop-footer">
+							<a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-expanded="false">
+								</i> My Account <b class="caret"></b>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
+								<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Forget Password</a></li>
+								<li><a href="{% url 'busniuss:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
+								<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
+								<li><a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
+							</ul>
+							</li>
+							<li class="li_for_desk"><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
+							<li class="li_for_desk"><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Forget Password</a></li>
+							<li class="li_for_desk"><a href="{% url 'busniuss:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
+							<li class="li_for_desk"><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
+							<li class="li_for_desk"><a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
+						
 
-          {% else %}
-            <li><a href="{% url 'account:login' %}"><i class="fa fa-sign-in"></i> Login</a></li>
-          {% endif %}
-        </ul>
-        <!-- /NAV -->
-      </div>
-      <!-- /responsive-nav -->
-    </div>
-    <!-- /container -->
-  </nav>
+					{% else %}
+						<li><a href="{% url 'account:login' %}"><i class="fa fa-sign-in"></i> Login</a></li>
+					{% endif %}
+					</ul>
+					<!-- /NAV -->
+				</div>
+				<!-- /responsive-nav -->
+			</div>
+			<!-- /container -->
+		</nav>
 		<!-- /NAVIGATION -->
-
-		
 		<!-- MAIN HEADER -->
 		<div id="header">
 			<!-- container -->
