@@ -93,6 +93,7 @@
                                                             {% if business.is_approved %} Unapprove {% else %} Approve {% endif %}
                                                         </button>
                                                     </form>
+                                                    <a href="{% url 'business:business_update' business.id %}" class="btn btn-info">Update</a>
                                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                                 </div>
                                             </div>

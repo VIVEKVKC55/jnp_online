@@ -57,7 +57,13 @@ class BusinessDetailsUpdateView(UpdateView):
     success_url = reverse_lazy('pim:list')  # Redirect to a list page after successful update
 
     def get_object(self, queryset=None):
-        """ Fetch the BusinessDetails object associated with the current user """
+        """ Fetch the BusinessDetails object associated with the current user or allow admin to update any business details """
+        # Admin can update any business details, so check for admin user
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            business_id = self.kwargs.get('pk')  # Fetch the business details ID from the URL
+            return BusinessDetails.objects.get(id=business_id)
+        
+        # Regular user can only update their own business details
         try:
             return self.request.user.businessdetails
         except BusinessDetails.DoesNotExist:
@@ -70,31 +76,35 @@ class BusinessDetailsUpdateView(UpdateView):
         # Save the business details
         business_details = form.save()
 
-        # Send email to the admin after the business details are updated
-        send_mail(
-            'Business Details Updated',
-            f'Hello Admin,\n\nA user has updated their business details. The business name is: {business_details.business_name}. '
-            'Please review and approve the updated information.\n\n'
-            f'https://jnp-online.vercel.app/admin/business/businessdetails/{business_details.id}/change/\n\n'
-            'Regards,\nYour Website',
-            settings.DEFAULT_FROM_EMAIL,  # From email address
-            [settings.ADMIN_EMAIL],  # Admin's email address
-            fail_silently=False,
-        )
+        # If the user is an admin, we don't send the "business details updated" email to the admin
+        if not self.request.user.is_staff or self.request.user.is_superuser:
+            # Send email to the admin after the business details are updated
+            send_mail(
+                'Business Details Updated',
+                f'Hello Admin,\n\nA user has updated their business details. The business name is: {business_details.business_name}. '
+                'Please review and approve the updated information.\n\n'
+                f'https://jnp-online.vercel.app/admin/business/businessdetails/{business_details.id}/change/\n\n'
+                'Regards,\nYour Website',
+                settings.DEFAULT_FROM_EMAIL,  # From email address
+                [settings.ADMIN_EMAIL],  # Admin's email address
+                fail_silently=False,
+            )
 
-        # Send an email to the user confirming their business details update
-        send_mail(
-            'Business Details Update Successful',
-            f'Hello {business_details.user.username},\n\n'
-            'Your business details have been successfully updated and are now pending approval.\n\n'
-            'You will be notified once your registration is approved or further action is required.\n\n'
-            'Regards,\nYour Website',
-            settings.DEFAULT_FROM_EMAIL,  # From email address
-            [business_details.user.email],  # User's email address
-            fail_silently=False,
-        )
+            # Send an email to the user confirming their business details update
+            send_mail(
+                'Business Details Update Successful',
+                f'Hello {business_details.user.username},\n\n'
+                'Your business details have been successfully updated and are now pending approval.\n\n'
+                'You will be notified once your registration is approved or further action is required.\n\n'
+                'Regards,\nYour Website',
+                settings.DEFAULT_FROM_EMAIL,  # From email address
+                [business_details.user.email],  # User's email address
+                fail_silently=False,
+            )
+            messages.success(self.request, "Your business details have been updated successfully and are pending approval.")
+        else:
+            messages.success(self.request, "Business details have been updated successfully.")
 
-        messages.success(self.request, "Your business details have been updated successfully and are pending approval.")
         return redirect(self.success_url)
 
     def form_invalid(self, form):
