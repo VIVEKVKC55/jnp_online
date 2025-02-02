@@ -61,7 +61,11 @@ class BusinessDetailsUpdateView(UpdateView):
         # Admin can update any business details, so check for admin user
         if self.request.user.is_staff or self.request.user.is_superuser:
             business_id = self.kwargs.get('pk')  # Fetch the business details ID from the URL
-            return BusinessDetails.objects.get(id=business_id)
+            try:
+                return BusinessDetails.objects.get(id=business_id)
+            except:
+                return self.request.user.businessdetails
+
         
         # Regular user can only update their own business details
         try:
