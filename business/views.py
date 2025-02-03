@@ -5,9 +5,10 @@ from django.contrib import messages
 from .forms import BusinessDetailsForm, BusinessDetailsUpdateForm
 from .models import BusinessDetails
 from django.urls import reverse_lazy
-from django.views.generic.edit import UpdateView
+from django.views.generic.edit import UpdateView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-def register_user(request):
+def register_business(request):
     if request.method == 'POST':
         form = BusinessDetailsForm(request.POST, request.FILES)
         if form.is_valid():
@@ -46,7 +47,7 @@ def register_user(request):
             messages.error(request, "There was an error with the registration form.")
     else:
         form = BusinessDetailsForm()
-    return render(request, 'default/business/register.html', {'form': form})
+    return render(request, 'default/business/new_reg.html', {'form': form})
 
 
 class BusinessDetailsUpdateView(UpdateView):
@@ -114,4 +115,33 @@ class BusinessDetailsUpdateView(UpdateView):
     def form_invalid(self, form):
         """ Handle invalid form submission """
         messages.error(self.request, "There was an error with updating your business details.")
+        return super().form_invalid(form)
+
+
+class BusinessDetailsCreateView(LoginRequiredMixin, CreateView):
+    model = BusinessDetails
+    form_class = BusinessDetailsUpdateForm  # Form for business registration
+    template_name = 'default/business/register.html'
+    success_url = reverse_lazy('pim:list')  # Redirect after successful registration
+
+    def dispatch(self, request, *args, **kwargs):
+        """ Check if user already has a business registered """
+        if hasattr(request.user, 'businessdetails'):
+            messages.warning(request, "You have already registered your business. You can update it instead.")
+            return redirect('pim:business-update', pk=request.user.businessdetails.pk)  # Redirect to update page
+        
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        """ Save the form and associate the business with the user """
+        business = form.save(commit=False)
+        business.user = self.request.user  # Associate the business with the logged-in user
+        business.save()
+
+        messages.success(self.request, "Your business has been registered successfully and is pending approval.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """ Handle invalid form submission """
+        messages.error(self.request, "There was an error with your business registration.")
         return super().form_invalid(form)

@@ -17,10 +17,14 @@
 									</i> My Account <b class="caret"></b>
 								</a>
 								<ul class="dropdown-menu">
-									<li><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
+									{% if not request.user.businessdetails %}
+										<li><a href="{% url 'business:business-register' %}"><i class="fa fa-building"></i> Register Business</a></li>
+									{% else %}
+										<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
+										<li><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
+										<li><a href="{% url 'business:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
+									{% endif %}
 									<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Forget Password</a></li>
-									<li><a href="{% url 'business:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
-									<li><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
 									<li><a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
 								</ul>
 							</li>

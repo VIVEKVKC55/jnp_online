@@ -1,10 +1,11 @@
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import View, ListView, CreateView, UpdateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from catalog.models import Product, ProductImages, ProductAttributeValue
 from business.models import BusinessDetails
+
 from .forms import (
     ProductForm, 
     ProductImageUpdateFormSet, 
@@ -92,55 +93,48 @@ class ProductCreateView(CreateView):
         })
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(UserPassesTestMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'default/pim/edit.html'
-    success_url = reverse_lazy('pim:list')
 
-    def dispatch(self, request, *args, **kwargs):
-        """Restrict access if business details are missing or not approved."""
+    def test_func(self):
+        """ Allow only superusers, staff, or users with an approved business to update products """
+        user = self.request.user
+
+        if user.is_superuser or user.is_staff:
+            return True  # Admin users can always update products
+
         try:
-            business_details = BusinessDetails.objects.get(user=request.user)
-            if not business_details.is_approved:
-                messages.error(request, "Your business details have not been approved.")
-                return redirect('home:home')
+            business_details = BusinessDetails.objects.get(user=user)
+            return business_details.is_approved  # Only allow if business is approved
         except BusinessDetails.DoesNotExist:
-            messages.error(request, "You must have business details to access this page.")
-            return redirect('home:home')
+            return False  # Restrict users without business details
 
-        return super().dispatch(request, *args, **kwargs)
+    def handle_no_permission(self):
+        """ Redirect users who fail the test """
+        messages.error(self.request, "You do not have permission to update this product.")
+        return redirect('home:home')
 
     def get_object(self, queryset=None):
-        """Fetch the product object using URL kwargs."""
+        """ Fetch the product object using URL kwargs """
         return get_object_or_404(Product, pk=self.kwargs.get('pk'))
 
-    def get(self, request, *args, **kwargs):
-        product = self.get_object()  # Get the product instance
-        form_class = self.get_form_class()  # Get the form class
-        form = form_class(instance=product)  # Create form with instance data
+    def form_valid(self, form):
+        """ Handle valid form submission and redirect accordingly """
+        product = form.save(commit=False)
+        product.save()
+        messages.success(self.request, "Product updated successfully!")
 
-        return self.render_to_response({
-            'form': form,
-        })
+        # Redirect logic based on user role
+        if self.request.user.is_superuser or self.request.user.is_staff:
+            return redirect(reverse('pim:product_list'))  # Redirect to admin product list
+        return redirect(reverse('pim:list'))  # Redirect to regular product list
 
-    def post(self, request, *args, **kwargs):
-        product = self.get_object()  # Fetch product instance
-        form = self.get_form_class()(request.POST, request.FILES, instance=product)  # Create form with instance data
-
-        if form.is_valid():
-            # Save the product instance
-            product = form.save(commit=False)
-            product.save()
-            messages.success(request, "Product updated successfully!")
-            return redirect(self.success_url)
-        else:
-            # Debugging: Check the errors in formset and form
-            print("Form errors:", form.errors)
-        return self.render_to_response({
-            'form': form,
-        })
-
+    def form_invalid(self, form):
+        """ Handle invalid form submission """
+        messages.error(self.request, "There were errors updating the product.")
+        return self.render_to_response({'form': form})
 
 
 class ProductDeleteView(View):
