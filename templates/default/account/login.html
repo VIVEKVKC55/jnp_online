@@ -1,7 +1,7 @@
 {% extends "default/layout/layout.html" %}
 {% load static %}
 
-{% block title %} Material Handling, Industrial Supplies, Tools, Safety Equipment & More {% endblock %}
+{% block title %}Login Page{% endblock %}
 {% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
 
 {% block ld_json %}
@@ -58,7 +58,7 @@
                     Don't have an account? <a href="{% url 'account:register' %}" class="text-decoration-none">Register here</a>
                 </p>
                 <p class="mt-3 text-center">
-                    Don't have a business account? <a href="{% url 'busniuss:reg' %}" class="text-decoration-none">Register here</a>
+                    Don't have a business account? <a href="{% url 'business:reg' %}" class="text-decoration-none">Register here</a>
                 </p>
             </div>
         </div>
