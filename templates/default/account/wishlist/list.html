@@ -1,0 +1,63 @@
+{% extends "default/layout/layout.html" %}
+{% load static %}
+
+{% block title %} Material Handling, Industrial Supplies, Tools, Safety Equipment & More {% endblock %}
+{% block canonical_url %}{{request.scheme}}://{{request.META.HTTP_HOST}}{{request.path}}{% endblock %}
+
+{% block ld_json %}
+{{home_schema|safe}}
+{% endblock %}
+
+{% block content %}
+
+		<!-- BREADCRUMB -->
+		<div id="breadcrumb" class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="breadcrumb-tree">
+							<li><a href="/">Home</a></li>
+							<li><a href="#">Add New Product</a></li>
+						</ul>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /BREADCRUMB -->
+
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container mt-5">
+				<!-- row -->
+				<div class="row justify-content-center">
+					<div class="">
+						<div class="card shadow-lg p-4">
+							<h2 class="text-center">Your Wishlist</h2>
+                            <ul>
+                                {% for item in wishlist_items %}
+                                    <li>
+                                        {{ item.product.name }}
+                                        <form action="{% url 'account:toggle_wishlist' item.product.id %}" method="post" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit"><i class="fas fa-trash text-red-500"></i></button>
+                                        </form>
+                                    </li>
+                                {% empty %}
+                                    <p>Your wishlist is empty.</p>
+                                {% endfor %}
+                            </ul>
+                            
+						</div>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
+{% endblock content %}

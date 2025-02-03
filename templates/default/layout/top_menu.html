@@ -29,13 +29,17 @@
 								</ul>
 							</li>
 							
-							<li class="li_for_desk"><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
+							{% if not request.user.businessdetails %}
+								<li class="li_for_desk"><a href="{% url 'business:business-register' %}"><i class="fa fa-building"></i> Register Business</a></li>
+							{% else %}
+								<li class="li_for_desk"><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
+								<li class="li_for_desk"><a href="{% url 'pim:list' %}"><i class="fa fa-list"></i> My Post</a></li>
+								<li class="li_for_desk"><a href="{% url 'business:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
+							{% endif %}
 							<li class="li_for_desk"><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Forget Password</a></li>
-							<li class="li_for_desk"><a href="{% url 'business:update' %}"><i class="fa fa-pencil-square"></i> Update Business</a></li>
-							<li class="li_for_desk"><a href="{% url 'pim:add' %}"><i class="fa fa-plus-square"></i> Add Product</a></li>
 							<li class="li_for_desk"><a href="{% url 'account:logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
 							{% if user.is_staff %}
-								<li class="dropdown">
+								<li class="dropdown desktop-footer">
 									<a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-expanded="false">
 										</i>    Admin <b class="caret"></b>
 									</a>
@@ -46,6 +50,9 @@
 										{% comment %} <li class><a href="/admin/"><i class="fa fa-user"></i>Admin</a></li> {% endcomment %}
 									</ul>
 								</li>
+								<li class="active li_for_desk"><a href="/admin/"><i class="fa fa-user"></i>Admin Section</a></li>
+								<li class="li_for_desk"><a href="{% url 'pim:business_list' %}"><i class="fa fa-user"></i>Business List</a></li>
+								<li class="li_for_desk"><a href="{% url 'pim:product_list' %}"><i class="fa fa-user"></i>Product List</a></li>
 							{% endif %}
 					{% else %}
 						<li><a href="{% url 'account:login' %}"><i class="fa fa-sign-in"></i> Login</a></li>
@@ -76,7 +83,7 @@
 					<!-- /LOGO -->
 
 					<!-- SEARCH BAR -->
-					{% comment %} <div class="col-md-6">
+					<div class="col-md-6">
 						<div class="header-search">
 							<form>
 								<select class="input-select">
@@ -88,24 +95,24 @@
 								<button class="search-btn">Search</button>
 							</form>
 						</div>
-					</div> {% endcomment %}
+					</div>
 					<!-- /SEARCH BAR -->
 
 					<!-- ACCOUNT -->
 					<div class="col-md-3 clearfix">
 						<div class="header-ctn">
 							<!-- Wishlist -->
-							{% comment %} <div>
-								<a href="#">
+							<div>
+								<a href="{% url 'account:wishlist'%}">
 									<i class="fa fa-heart-o"></i>
 									<span>Your Wishlist</span>
-									<div class="qty">2</div>
+									<div class="qty">{{user.wishlist_set.all.count}}</div>
 								</a>
 							</div>
 							<!-- /Wishlist -->
 
 							<!-- Cart -->
-							<div class="dropdown">
+							{% comment %} <div class="dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
 									<i class="fa fa-shopping-cart"></i>
 									<span>Your Cart</span>

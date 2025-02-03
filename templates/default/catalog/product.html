@@ -140,11 +140,20 @@
 								</div>
 								<button class="add-to-cart-btn"><i class="fa fa-phone"></i>phone number</button>
 							</div>  {% endcomment %}
-
-							{% comment %} <ul class="product-btns">
+							<form class="wishlist-form" data-product-id="{{ product.id }}">
+								{% csrf_token %}
+								<button type="button" class="wishlist-btn">
+									{% if product in user.wishlist_set.all %}
+										<i class="fa fa-heart"></i> <!-- Filled heart -->
+									{% else %}
+										<i class="fa fa-heart-o"></i> <!-- Empty heart -->
+									{% endif %}
+								</button>
+							</form>
+							 {% comment %} <ul class="product-btns">
 								<li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
 								<li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
-							</ul> {% endcomment %}
+							</ul>  {% endcomment %}
 
 							<br>
 							{% comment %} <ul class="product-links">
@@ -403,3 +412,44 @@
 		</div>
 		<!-- /SECTION -->
 {% endblock content %}
+{% block extrajs %}
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		document.querySelectorAll(".wishlist-btn").forEach(button => {
+			button.addEventListener("click", function (event) {
+				event.preventDefault();
+				
+				let form = this.closest(".wishlist-form");
+				let productId = form.getAttribute("data-product-id");
+				let csrfToken = form.querySelector("[name=csrfmiddlewaretoken]").value;
+				let icon = this.querySelector("i");
+	
+				fetch(`/accounts/wishlist/toggle/${productId}/`, {  // Make sure this URL matches urls.py
+					method: "POST",
+					headers: {
+						"X-CSRFToken": csrfToken,
+						"Content-Type": "application/json",
+					},
+					credentials: "same-origin",
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error(`HTTP error! Status: ${response.status}`);
+					}
+					return response.json();
+				})
+				.then(data => {
+					if (data.status === "added") {
+						icon.classList.remove("fa-heart-o", "text-gray-500");
+						icon.classList.add("fa-heart", "text-red-500");
+					} else {
+						icon.classList.remove("fa-heart", "text-red-500");
+						icon.classList.add("fa-heart-o", "text-gray-500");
+					}
+				})
+				.catch(error => console.error("Error:", error));
+			});
+		});
+	});
+	</script>
+{% endblock extrajs %}
