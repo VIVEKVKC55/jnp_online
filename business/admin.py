@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import BusinessDetails
 
+admin.site.site_header = "JNPOnline Admin Panel"
+admin.site.site_title = "JNPOnline Admin"
+admin.site.index_title = "Welcome to JNPOnline Dashboard"
+
 @admin.register(BusinessDetails)
 class BusinessDetailsAdmin(admin.ModelAdmin):
     list_display = ('business_name', 'owner_name', 'mobile_number', 'is_approved', 'approved_by', 'approve_button')
