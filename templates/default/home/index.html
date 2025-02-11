@@ -18,7 +18,7 @@
                 <div class="swiper-wrapper">
                     <!-- Slides -->
                     <div class="swiper-slide flex items-center bg-no-repeat bg-cover bg-center min-h-[520px]"
-                        style="background-image: url(assets/images/banner-1.jpg);">
+                        style="background-image: url('{% static "assets/images/banner-1.jpg" %}');">
                         <div class="container">
                             <div class="lg:flex flex-wrap">
                                 <div class="w-full lg:w-1/2">
@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="swiper-slide flex items-center bg-no-repeat bg-cover bg-center min-h-[520px]"
-                        style="background-image: url(assets/images/banner-2.jpg);">
+						style="background-image: url('{% static "assets/images/banner-2.jpg" %}');">
                         <div class="container">
                             <div class="lg:flex flex-wrap">
                                 <div class="lg:w-1/2">
@@ -62,7 +62,7 @@
                     </div>
 
                     <div class="swiper-slide flex items-center bg-no-repeat bg-cover bg-center min-h-[520px]"
-                        style="background-image: url(sataic/assets/images/banner-3.jpg);">
+						style="background-image: url('{% static "assets/images/banner-3.jpg" %}');">
                         <div class="container">
                             <div class="lg:flex flex-wrap">
                                 <div class="lg:w-1/2">
@@ -191,7 +191,7 @@
 				{% endfor %}
 			</div>
 
-			<div class="mt-5 flex items-center justify-center gap-2.5">
+			{% comment %} <div class="mt-5 flex items-center justify-center gap-2.5">
 				<button
 					class="w-[30px] h-[30px] leading-[30px] text-[15px] text-center bg-primary text-white">1</button>
 				<button
@@ -207,7 +207,7 @@
 							d="M21.188 9.281L19.78 10.72L24.063 15H4v2h20.063l-4.282 4.281l1.407 1.438L27.905 16z" />
 					</svg>
 				</button>
-			</div>
+			</div> {% endcomment %}
 		</div>
 	</div>
 	<!-- shop list view end-->
